@@ -1,0 +1,6 @@
+---
+
+dependencies:
+  - role: letsencrypt
+    when: gallery_https
+    domains: "{{ gallery_domain }}"

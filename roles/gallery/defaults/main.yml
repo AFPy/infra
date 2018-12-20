@@ -1,0 +1,7 @@
+---
+
+gallery_user: gallery
+gallery_https: false
+gallery_domain: paullaroid.pycon.fr
+gallery_repo: https://github.com/AFPy/pycon-fr-gallery.git
+gallery_home: /srv/gallery/

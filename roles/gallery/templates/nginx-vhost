@@ -1,0 +1,33 @@
+{% if gallery_https %}
+server {
+    listen 80;
+    server_name {{ gallery_domain }};
+
+    location / {
+        return 301 https://{{ gallery_domain }}$request_uri;
+    }
+}
+
+server
+{
+    listen 443 ssl;
+    server_name {{ gallery_domain }};
+
+    include snippets/letsencrypt-{{ gallery_domain }}.conf;
+
+    location / {
+        root {{ gallery_home }}/repo/_build/;
+        try_files $uri $uri/ =404;
+    }
+}
+{% else %}
+server {
+    listen 80;
+    server_name {{ gallery_domain }};
+
+    location / {
+        root {{ gallery_home }}/repo/_build/;
+        try_files $uri $uri/ =404;
+    }
+}
+{% endif %}

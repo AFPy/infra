@@ -1,0 +1,4 @@
+---
+
+- hosts: gallery
+  roles: [common, gallery]
