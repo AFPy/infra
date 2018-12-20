@@ -24,10 +24,8 @@ Ces services sont utiles :
 
 ### TODO
 
-Il faut encore faire un dump static de http://paullaroid.pycon.fr/, ce
-qui nous permettra d'arreter l'app paullaroid et un couchdb, mais il y
-a un truc de navigation javascript que `wget` ne détecte pas et il ne
-récupère donc pas toutes les pages.
+http://paullaroid.pycon.fr/ à été dump dans https://github.com/AFPy/pycon-fr-gallery
+Il reste a le mettre en ligne et a shooter le couchdb.
 
 
 ## storage.afpy.org
