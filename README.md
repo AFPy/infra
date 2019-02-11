@@ -2,6 +2,8 @@
 
 ## TODO
 
+- [ ] Rediriger https://www.pycon.fr/cw/ vers http://2010.pycon.fr
+- [ ] HTTPS sur paullaroid.pycon.fr, 2010.pycon.fr, 2011.pycon.fr
 - [ ] Setup watchghost
 - [ ] Rédiger le ansible pour afpy.org, en profiter pour mettre en place du continuous delivery.
 - [ ] Documenter la sauvegarde.
@@ -9,6 +11,7 @@
 - [ ] Sauvegarder puis supprimer la jail static
 - [ ] Sauvegarder puis supprimer la jail ldap
 - [ ] Vérifier les versions des Django des pycon 2012, 2013, 2014, 2015
+- [ ] Déployer les django des pycon 2012, 2013, 2014, 2015 via Ansible
 - [ ] Sauvegarder puis supprimer la jail plone
 - [ ] Sauvegarder puis supprimer la jail couchdb
 - [ ] Sauvegarder puis supprimer la jail photomaton
@@ -61,6 +64,9 @@ On y stocke :
 - http
 - backupdebian
 - ns1
+
+En parlant de backups, Julien Palard a un rsnapshot (en 2019) de
+storage.afpy.org sur son NAS.
 
 
 ## 163.172.45.2
