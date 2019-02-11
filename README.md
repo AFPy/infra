@@ -5,7 +5,6 @@
 - [ ] Setup watchghost
 - [ ] Rédiger le ansible pour afpy.org, en profiter pour mettre en place du continuous delivery.
 - [ ] Documenter la sauvegarde.
-- [ ] Migrer le cubicweb en static s'il y a des choses à récupérer
 - [ ] Sauvegarder puis supprimer la jail supervision
 - [ ] Sauvegarder puis supprimer la jail static
 - [ ] Sauvegarder puis supprimer la jail ldap
@@ -19,9 +18,6 @@
 
 
 ## rainette.afpy.org
-
-Ces services sont arrêtés, on va pouvoir les virer, disons en décembre
-2018, si personne ne pleure d'ici là :
 
 Liste des jails :
 
@@ -65,6 +61,12 @@ On y stocke :
 - http
 - backupdebian
 - ns1
+
+
+## 163.172.45.2
+
+Est une machine de test de Julien, elle héberge paullaroid.pycon.fr,
+pycon2010.pycon.fr, pycon2011.pycon.fr déployés via ansible.
 
 
 # Ansible

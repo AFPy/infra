@@ -1,0 +1,4 @@
+---
+
+- include: pelican.yml
+  tags: pelican
