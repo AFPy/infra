@@ -1,23 +1,26 @@
 ---
 
+- hosts: all
+  roles: [common]
+
 - hosts: gallery
-  roles: [common, gallery]
+  roles: [gallery]
 
 - hosts: pycons
-  roles: [common, pelican]
+  roles: [pelican]
   vars:
     pelican_user: pycon2010
-    pelican_https: false
+    pelican_https: true
     pelican_domain: 2010.pycon.fr
     pelican_repo: https://github.com/AFPy/pyconfr_2010
     pelican_path_in_repo: 2010/
     pelican_home: "/srv/{{ pelican_user }}/"
 
 - hosts: pycons
-  roles: [common, pelican]
+  roles: [pelican]
   vars:
     pelican_user: pycon2011
-    pelican_https: false
+    pelican_https: true
     pelican_domain: 2011.pycon.fr
     pelican_repo: https://github.com/AFPy/pyconfr_2010
     pelican_path_in_repo: 2011/

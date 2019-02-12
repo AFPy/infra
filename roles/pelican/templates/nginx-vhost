@@ -16,7 +16,7 @@ server
     include snippets/letsencrypt-{{ pelican_domain }}.conf;
 
     location / {
-        root {{ pelican_home }}/repo/_build/;
+        root {{ pelican_home }}/www/;
         try_files $uri $uri/ =404;
     }
 }

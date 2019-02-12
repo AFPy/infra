@@ -1,0 +1,4 @@
+---
+
+dependencies:
+  - { role: letsencrypt, domains: ["{{ pelican_domain }}"] }
