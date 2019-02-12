@@ -2,7 +2,6 @@
 
 ## TODO
 
-- [ ] HTTPS sur paullaroid.pycon.fr, 2010.pycon.fr, 2011.pycon.fr
 - [ ] Setup watchghost
 - [ ] Rédiger le ansible pour afpy.org, en profiter pour mettre en place du continuous delivery.
 - [ ] Documenter la sauvegarde.

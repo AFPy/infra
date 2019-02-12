@@ -5,6 +5,8 @@
 
 - hosts: gallery
   roles: [gallery]
+  vars:
+    gallery_https: true
 
 - hosts: pycons
   roles: [pelican]
