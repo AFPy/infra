@@ -27,3 +27,11 @@
     pelican_repo: https://github.com/AFPy/pyconfr_2010
     pelican_path_in_repo: 2011/
     pelican_home: "/srv/{{ pelican_user }}/"
+
+- hosts: pycons
+  roles: [static]
+  vars:
+    static_user: pycon2012
+    static_https: true
+    static_domain: 2012.pycon.fr
+    static_repo: https://github.com/AFPy/pyconfr_2012

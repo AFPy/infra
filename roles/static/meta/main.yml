@@ -1,0 +1,4 @@
+---
+
+dependencies:
+  - { role: letsencrypt, domains: ["{{ static_domain }}"], when: static_https }
