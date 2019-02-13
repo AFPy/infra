@@ -1,5 +1,6 @@
 ---
 
+
 - hosts: all
   roles: [common]
 
@@ -35,3 +36,70 @@
     static_https: true
     static_domain: 2012.pycon.fr
     static_repo: https://github.com/AFPy/pyconfr_2012
+
+# - hosts: pycons
+#   roles: [passbolt]
+#   vars:
+#     passbolt_tmpdir: "/srv/passbolt-tmp/"
+#     passbolt_homedir: "/srv/passbolt/"
+#     passbolt_webroot: "/srv/passbolt/www/"
+#     passbolt_use_ssl: True
+#     passbolt_url: "https://passbolt.afpy.org"
+#     passbolt_domain: "passbolt.afpy.org"
+#     passbolt_gpgkey_length: 4096
+#     passbolt_gpgkey_sublength: 4096
+#     passbolt_gpgkey_email: "passbolt@afpy.org"
+#     passbolt_dbpass: "{{ vault_passbolt_dbpass }}"
+#     passbolt_smtp_sender_email: "passbolt@afpy.org"
+#     passbolt_php_fpm_user: "www-data"
+#     passbolt_php_fpm_group: "www-data"
+#
+#     passbolt_php_fpm_includedir: /etc/php/7.0/fpm/pool.d/
+#     passbolt_php_fpm_listen: /var/run/php/fpm.sock
+#     passbolt_dbport: 3306
+#     mysql_root_username: root
+#     mysql_root_password: "{{ vault_mysql_root_password }}"
+#     mysql_databases:
+#       - name: passbolt
+#         encoding: utf8mb4
+#         collation: utf8mb4_unicode_ci
+#     mysql_users:
+#       - name: passbolt
+#         password: "{{ vault_passbolt_dbpass }}"
+#         priv: "passbolt.*:ALL"
+#     mysql_packages:
+#     - mariadb-server
+#     - mariadb-client
+#     - python-mysqldb
+#     mysql_bind_address: '127.0.0.1'
+#     php_memory_limit: "512M"
+#     php_date_timezone: "Europe/Paris"
+#     php_webserver_daemon: "nginx"
+#     php_enable_php_fpm: true
+#     php_enable_webserver: false
+#     php_default_version_debian: "7.0"
+#     nginx_sites:
+#         passbolt_http:
+#             - listen 80
+#             - server_name "{{ passbolt_domain }}"
+#             - location / {
+#               return 301 https://{{ passbolt_domain }}$request_uri;
+#               }
+#
+#         passbolt:
+#             - listen 443 ssl
+#             - server_name passbolt.afpy.org
+#             - server_tokens off
+#             - include snippets/letsencrypt-{{ passbolt_domain }}.conf
+#             - root {{ passbolt_webroot }}/webroot/
+#             - location / { try_files $uri /index.php$is_args$args; }
+#             - location ~ \.php(/|$) {
+#               fastcgi_pass unix:{{ passbolt_php_fpm_listen }};
+#               fastcgi_split_path_info ^(.+\.php)(/.*)$;
+#               fastcgi_read_timeout 500;
+#               include fastcgi_params;
+#               fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+#               fastcgi_param SERVER_NAME $http_host;
+#               fastcgi_param DOCUMENT_ROOT $realpath_root;
+#               internal;
+#               }

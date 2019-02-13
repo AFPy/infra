@@ -37,6 +37,7 @@
       - python3-venv
       - python3-setuptools
       - python3-wheel
+      - sudo
 
 - name: Set some authorized keys
   authorized_key: user=root key="{{item}}"
