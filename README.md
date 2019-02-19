@@ -30,7 +30,10 @@ Liste des jails :
 - static
   - Héberge des fichiers sur afpy.org qui ne sont plus utilisés depuis le passage a flask.
 - ldap (Arrêté le 21 décembre 2018)
-- smtp la stack de mail (smtp, imap, antispam, antivirus) et de mailing list (mailman < 3.0).
+- smtp:
+  - smtpd (/usr/local/etc/mail/smtpd.conf)
+  - dovecot (comptes: /usr/local/etc/mail/tables/passwd)
+  - spamd
 - pyconfr
   - Le cubicweb (https://www.pycon.fr/cw/) avec les pycon de 2009, 2010, 2011.
   - Les Django de 2012 2013 2014 2015.
