@@ -47,6 +47,7 @@ Liste des jails :
   - Ancienne gestion des membres (https://github.com/AFPy/AfpyMembers)
   - Arrêté le 2018-12-21
 - mailman
+  - Le sitepass est disponnible dans passbolt.
 - http C'est le nginx qui dispatch aux autres jails.
 - alain
   - Bot IRC sur #afpy sur freenode.
@@ -65,9 +66,6 @@ On y stocke :
 - http
 - backupdebian
 - ns1
-
-En parlant de backups, Julien Palard a un rsnapshot (en 2019) de
-storage.afpy.org sur son NAS.
 
 
 ## 163.172.45.2
@@ -103,3 +101,40 @@ autre rôle, voir le `meta/main.yml` du rôle `gallery` par exemple.
 *common* est un rôle "de base" permettant d'avoir une conf "normale"
 sur toutes nos machines (emacs et vim installés, nos authorized-keys,
 pas de mlocate, ce genre de broutilles)
+
+
+# Backups
+
+Julien Palard a un rsnapshot (en 2019 en tout cas) de storage.afpy.org
+sur son NAS perso, avec :
+
+```
+backup  root@storage.afpy.org:/usr/jails/http/usr/local/www/nginx-dist/dl/      storage.afpy.org/
+
+backup  root@rainette.afpy.org:/etc/    rainette.afpy.org
+
+backup  root@rainette.afpy.org:/usr/jails/web/usr/local/etc/    rainette.afpy.org
+backup  root@rainette.afpy.org:/usr/jails/web/root/     rainette.afpy.org
+
+backup  root@rainette.afpy.org:/usr/jails/dns/usr/local/etc/    rainette.afpy.org
+backup  root@rainette.afpy.org:/usr/jails/supervision/usr/local/etc/    rainette.afpy.org
+backup  root@rainette.afpy.org:/usr/jails/static/usr/local/etc/ rainette.afpy.org
+backup  root@rainette.afpy.org:/usr/jails/ldap/usr/local/etc/   rainette.afpy.org
+backup  root@rainette.afpy.org:/usr/jails/smtp/usr/local/etc/   rainette.afpy.org
+backup  root@rainette.afpy.org:/usr/jails/pyconfr/usr/local/etc/        rainette.afpy.org
+backup  root@rainette.afpy.org:/usr/jails/plone/usr/local/etc/  rainette.afpy.org
+backup  root@rainette.afpy.org:/usr/jails/couchdb/usr/local/etc/        rainette.afpy.org
+backup  root@rainette.afpy.org:/usr/jails/photomaton/usr/local/etc/     rainette.afpy.org
+backup  root@rainette.afpy.org:/usr/jails/membres/usr/local/etc/        rainette.afpy.org
+backup  root@rainette.afpy.org:/usr/jails/mailman/usr/local/etc/        rainette.afpy.org
+backup  root@rainette.afpy.org:/usr/jails/http/usr/local/etc/   rainette.afpy.org
+backup  root@rainette.afpy.org:/usr/jails/alain/usr/local/etc/  rainette.afpy.org
+backup  root@rainette.afpy.org:/usr/jails/afpyro/usr/local/etc/ rainette.afpy.org
+
+backup  root@rainette.afpy.org:/usr/jails/http/usr/local/www/   rainette.afpy.org
+backup  root@rainette.afpy.org:/usr/jails/mailman/usr/local/www/        rainette.afpy.org
+backup  root@rainette.afpy.org:/usr/jails/pyconfr/usr/local/www/        rainette.afpy.org
+backup  root@rainette.afpy.org:/usr/jails/static/usr/local/www/ rainette.afpy.org
+backup  root@rainette.afpy.org:/usr/jails/supervision/usr/local/www/    rainette.afpy.org
+backup  root@rainette.afpy.org:/usr/jails/web/usr/local/www/    rainette.afpy.org
+```
