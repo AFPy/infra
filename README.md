@@ -1,5 +1,8 @@
 # Servers
 
+Dependencies:
+ - tschifftner.exim4_sendonly
+
 ## TODO
 
 - [ ] Setup watchghost
