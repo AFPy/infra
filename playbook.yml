@@ -42,7 +42,7 @@
   tasks:
     - name: Create passbolt backup directory
       file:
-        path: /src/passbolt_backup/
+        path: /srv/backups/
         owner: root
         group: root
         mode: 0700
@@ -53,7 +53,7 @@
         name: passbolt mysql backup
         minute: 20
         hour: 5
-        job: '/usr/bin/mysqldump passbolt > /src/$(date +"\%Y-\%m-\%d")-passbolt_backup.sql'
+        job: '/usr/bin/mysqldump passbolt > /srv/backups/passbolt.sql'
       tags: backup
 
 
