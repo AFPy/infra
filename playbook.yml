@@ -44,6 +44,10 @@
     rsnapshot_backups:
       - remote: passbolt.afpy.org:/srv/backups/
         path: passbolt.afpy.org/
+      - remote: passbolt.afpy.org:/srv/passbolt/www/webroot/img/public/
+        path: passbolt.afpy.org/
+      - remote: passbolt.afpy.org:/srv/passbolt/www/config/
+        path: passbolt.afpy.org/
 
 - hosts: rsnapshotted
   tasks:
