@@ -48,7 +48,7 @@
     name: ["mlocate", "locate"]
     state: absent
 
-- name: Drop all Python packages installed globall (Please use venvs)
+- name: Drop all Python packages installed globally (Please use venvs)
   file:
     path: "/usr/local/lib/python{{ item }}"
     state: absent
