@@ -37,6 +37,22 @@
     static_domain: 2012.pycon.fr
     static_repo: https://github.com/AFPy/pyconfr_2012
 
+- hosts: rsnapshoters
+  roles: [rsnapshoter]
+  vars:
+    rsnapshotted_hosts: "{{ groups.rsnapshotted }}"
+    rsnapshot_backups:
+      - remote: passbolt.afpy.org:/srv/backups/
+        path: passbolt.afpy.org/
+
+- hosts: rsnapshotted
+  tasks:
+    - name: Install rsync
+      package:
+        name: rsync
+        state: present
+      tags: rsnapshot
+
 - hosts: pycons
   roles: [tschifftner.exim4_sendonly, passbolt]
   tasks:

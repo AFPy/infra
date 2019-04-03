@@ -142,3 +142,10 @@ backup  root@rainette.afpy.org:/usr/jails/static/usr/local/www/ rainette.afpy.or
 backup  root@rainette.afpy.org:/usr/jails/supervision/usr/local/www/    rainette.afpy.org
 backup  root@rainette.afpy.org:/usr/jails/web/usr/local/www/    rainette.afpy.org
 ```
+
+## Passbolt
+
+See [passbolt backup documentation](https://help.passbolt.com/hosting/backup).
+
+We're having a cron dumping mysql to /srv/backups/passbolt.sql on the
+passbolt host so we can rsnapshot it (we rely on rsnapshot to keep historic versions).

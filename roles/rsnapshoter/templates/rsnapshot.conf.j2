@@ -1,0 +1,23 @@
+config_version	1.2
+snapshot_root	/srv/backups/rsnapshot_{{ rsnapshot_name }}/
+no_create_root	1
+cmd_cp	/bin/cp
+cmd_rm	/bin/rm
+cmd_rsync	/usr/bin/rsync
+cmd_ssh	/usr/bin/ssh
+ssh_args	-i /root/.ssh/id_rsa_rsnapshot_{{ rsnapshot_name }} -o StrictHostKeyChecking=accept-new
+cmd_logger	/usr/bin/logger
+cmd_du	/usr/bin/du
+one_fs	1
+retain	daily	6
+retain	weekly	4
+retain	monthly	12
+retain	yearly	42
+verbose	2
+loglevel	2
+logfile	/var/log/rsnapshot_{{ rsnapshot_name }}.log
+lockfile	/var/run/rsnapshot_{{ rsnapshot_name }}.pid
+
+{% for line in rsnapshot_backups %}
+backup	{{ line.remote }}	{{ line.path }}
+{% endfor %}

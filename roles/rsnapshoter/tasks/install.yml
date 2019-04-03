@@ -1,0 +1,22 @@
+---
+
+- name: Install rsnapshot
+  package:
+    name: rsnapshot
+    state: present
+
+- name: Create rsnapshot directory
+  file:
+    path: "/srv/backups/"
+    state: directory
+    owner: root
+    group: root
+    mode: 0750
+
+- name: Create rsnapshot directory
+  file:
+    path: "/srv/backups/rsnapshot_{{ rsnapshot_name }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0750

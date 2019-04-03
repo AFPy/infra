@@ -3,3 +3,9 @@
 
 [pycons]
 163.172.45.2
+
+[rsnapshoters]
+10.0.0.2  # Yes it's on my lan, I'm just testing.
+
+[rsnapshotted]
+163.172.45.2

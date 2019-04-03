@@ -1,0 +1,7 @@
+---
+
+# Change this if you need multiple rsnapshots configured on the same host:
+# - One ssh key will be created for each of them
+# - One cron for each
+# - One configuration file for each
+rsnapshot_name: backups
