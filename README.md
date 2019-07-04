@@ -7,9 +7,7 @@ Dependencies:
 
 ## TODO
 
-- [ ] Setup watchghost
 - [ ] Rédiger le ansible pour afpy.org, en profiter pour mettre en place du continuous delivery.
-- [ ] Documenter la sauvegarde.
 - [ ] Sauvegarder puis supprimer la jail supervision
 - [ ] Sauvegarder puis supprimer la jail static
 - [ ] Sauvegarder puis supprimer la jail ldap
@@ -21,41 +19,60 @@ Dependencies:
 - [ ] Sauvegarder puis supprimer la jail membres
 - [ ] Rediriger le sous domaine afpyro.afpy.org vers autre chose.
 - [ ] Sauvegarder puis supprimer la jail afpyro
+- [ ] Setup watchghost
 
 
 ## rainette.afpy.org
 
-Liste des jails :
+Liste des jails toujours utiles :
 
 - web: héberge https://afpy.org (https://github.com/afpy/site/)
 - dns
-- supervision: Un icinga2, Julien, Voileux, et jpcw ont un compte.
-   - abandonné depuis 2017
-   - shooté le 2018-12-21.
-- static
-  - Héberge des fichiers sur afpy.org qui ne sont plus utilisés depuis le passage a flask.
-- ldap (Arrêté le 21 décembre 2018)
 - smtp:
   - smtpd (/usr/local/etc/mail/smtpd.conf)
   - dovecot (comptes: /usr/local/etc/mail/tables/passwd)
   - spamd
 - pyconfr
-  - Le cubicweb (https://www.pycon.fr/cw/) avec les pycon de 2009, 2010, 2011.
-  - Les Django de 2012 2013 2014 2015.
-  - Les Pelican de 2016 2017 2018.
-- plone (Arrêté le 20 décembre 2018)
-- couchdb
-  - Utilisé par l'ancien photomaton, migré en statique, arrété le 2018-12-21.
-- photomaton
-  - Ancien photomaton en Pyramid, migré en statique, arrêté le 2018-12-21.
-- membres:
-  - Ancienne gestion des membres (https://github.com/AFPy/AfpyMembers)
-  - Arrêté le 2018-12-21
+  - Un static dump de 2013: `/home/pyconfr/static_dump/2013/`.
+  - Un static dump de 2014: `/home/pyconfr/static_dump/2014/`.
+  - Un static dump de 2015: `/home/pyconfr/static_dump/2015/`.
+  - Les Pelican de 2016, 2017, 2018.
+  - Le flask-freeze de 2019.
 - mailman
   - Le sitepass est disponnible dans passbolt.
-- http C'est le nginx qui dispatch aux autres jails.
+- http
+  - C'est le nginx qui dispatch aux autres jails.
+  - 2019-07-04: `rm sites-enabled/{plone,hg,paullaroid,membres,supervision}.afpy.org`
 - alain
   - Bot IRC sur #afpy sur freenode.
+
+
+Jails en fin de vie :
+
+- supervision: Un icinga2, Julien, Voileux, et jpcw ont un compte.
+  - abandonné depuis 2017
+  - 2019-07-04: `ezjail-admin stop supervision`
+- static
+  - Héberge des fichiers sur afpy.org qui ne sont plus utilisés depuis le passage a flask.
+  - 2019-07-04: ezjail-admin stop static
+- ldap (Arrêté le 21 décembre 2018)
+  - 2018-12-21: `/usr/local/etc/rc.d/slapd stop`
+  - 2019-07-04: `ezjail-admin stop ldap`
+- plone
+  - 2018-12-20: Deamon arrêté
+  - 2019-07-04: `ezjail-admin stop plone`
+- couchdb
+  - Utilisé par l'ancien photomaton, migré en statique
+  - 2018-12-21: Daemon arrété.
+  - 2019-07-04: `ezjail-admin stop couchdb`
+- photomaton
+  - Ancien photomaton en Pyramid, migré en statique.
+  - 2018-12-21: Daemon arrêté
+  - 2019-07-04: `ezjail-admin stop photomaton`
+- membres:
+  - Ancienne gestion des membres (https://github.com/AFPy/AfpyMembers)
+  - 2018-12-21: Daemon arrêté.
+  - 2019-07-04: `ezjail-admin stop membres`
 - afpyro
   - https://afpyro.afpy.org/
   - https://github.com/AFPy/siteafpyro
@@ -63,6 +80,8 @@ Liste des jails :
 
 
 ## storage.afpy.org
+
+Accessible via https://dl.afpy.org
 
 On y stocke :
 
@@ -75,8 +94,11 @@ On y stocke :
 
 ## 163.172.45.2
 
-Est une machine de test de Julien, elle héberge paullaroid.pycon.fr,
-pycon2010.pycon.fr, pycon2011.pycon.fr déployés via ansible.
+Est une machine de test de Julien, configurée via Ansible, elle héberge:
+
+- paullaroid.pycon.fr
+- pycon2010.pycon.fr
+- pycon2011.pycon.fr
 
 
 # Ansible
