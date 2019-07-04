@@ -4,6 +4,7 @@ Dependencies:
  - tschifftner.exim4_sendonly from ansible galaxy
  - https://github.com/laxathom/ansible-role-passbolt
 
+
 ## TODO
 
 - [ ] Setup watchghost
@@ -143,9 +144,10 @@ backup  root@rainette.afpy.org:/usr/jails/supervision/usr/local/www/    rainette
 backup  root@rainette.afpy.org:/usr/jails/web/usr/local/www/    rainette.afpy.org
 ```
 
+
 ## Passbolt
 
 See [passbolt backup documentation](https://help.passbolt.com/hosting/backup).
 
-We're having a cron dumping mysql to /srv/backups/passbolt.sql on the
-passbolt host so we can rsnapshot it (we rely on rsnapshot to keep historic versions).
+On a un CRON qui lance un `mysqldump` vers `/srv/backups/passbolt.sql`
+sur le serveur du passbolt, qui dont pourrait se faire sauvegarder par rsnapshot.
