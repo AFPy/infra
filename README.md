@@ -8,7 +8,6 @@ Dependencies:
 ## TODO
 
 - [ ] Rédiger le ansible pour afpy.org, en profiter pour mettre en place du continuous delivery.
-- [ ] Sauvegarder puis supprimer la jail static
 - [ ] Sauvegarder puis supprimer la jail ldap
 - [ ] Vérifier les versions des Django des pycon 2012, 2013, 2014, 2015
 - [ ] Déployer les django des pycon 2012, 2013, 2014, 2015 via Ansible
@@ -47,9 +46,6 @@ Liste des jails toujours utiles :
 
 Jails en fin de vie :
 
-- static
-  - Héberge des fichiers sur afpy.org qui ne sont plus utilisés depuis le passage a flask.
-  - 2019-07-04: ezjail-admin stop static
 - ldap (Arrêté le 21 décembre 2018)
   - 2018-12-21: `/usr/local/etc/rc.d/slapd stop`
   - 2019-07-04: `ezjail-admin stop ldap`
