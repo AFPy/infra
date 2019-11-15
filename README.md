@@ -12,7 +12,6 @@ Dependencies:
 - [ ] Vérifier les versions des Django des pycon 2012, 2013, 2014, 2015
 - [ ] Déployer les django des pycon 2012, 2013, 2014, 2015 via Ansible
 - [ ] Sauvegarder puis supprimer la jail plone
-- [ ] Sauvegarder puis supprimer la jail couchdb
 - [ ] Sauvegarder puis supprimer la jail membres
 - [ ] Rediriger le sous domaine afpyro.afpy.org vers autre chose.
 - [ ] Sauvegarder puis supprimer la jail afpyro
@@ -52,10 +51,6 @@ Jails en fin de vie :
 - plone
   - 2018-12-20: Deamon arrêté
   - 2019-07-04: `ezjail-admin stop plone`
-- couchdb
-  - Utilisé par l'ancien photomaton, migré en statique
-  - 2018-12-21: Daemon arrété.
-  - 2019-07-04: `ezjail-admin stop couchdb`
 - membres:
   - Ancienne gestion des membres (https://github.com/AFPy/AfpyMembers)
   - 2018-12-21: Daemon arrêté.
