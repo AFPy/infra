@@ -1,6 +1,0 @@
----
-
-dependencies:
-  - role: julienpalard.nginx_letsencrypt
-    certificates: "{{ [[ pelican_domain ]] }}"
-    when: pelican_https

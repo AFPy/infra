@@ -1,6 +1,0 @@
----
-
-dependencies:
-  - role: julienpalard.nginx_letsencrypt
-    certificates: "{{ [[ static_domain ]] }}"
-    when: static_https

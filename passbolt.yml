@@ -11,6 +11,7 @@
         mode: 0700
         state: directory
       tags: backup
+
     - name: Setup mysql passbolt backup
       cron:
         name: passbolt mysql backup
@@ -18,7 +19,6 @@
         hour: 5
         job: '/usr/bin/mysqldump passbolt > /srv/backups/passbolt.sql'
       tags: backup
-
 
   vars:
     passbolt_tmpdir: "/srv/passbolt-tmp/"
@@ -59,7 +59,7 @@
     php_webserver_daemon: "nginx"
     php_enable_php_fpm: true
     php_enable_webserver: false
-    php_default_version_debian: "7.0"
+    php_default_version_debian: "7.3"
     nginx_sites:
         passbolt_http:
             - listen 80

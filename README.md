@@ -1,4 +1,4 @@
-# Overview
+# Survol des playbooks Ansible
 
 On découpe nos *playbooks* Ansible par rôles :
 
@@ -12,8 +12,7 @@ En partant de là, on peut utiliser les commandes suivantes:
 D'abord installer Ansible dans un venv les dépendances :
 
 - pip install ansible
-- ansible-galaxy install julienpalard.nginx_letsencrypt
-- ansible-galaxy install tschifftner.exim4_sendonly
+- ansible-galaxy install -r requirements.yml
 
 Puis pour jouer les *playbooks* :
 
@@ -21,13 +20,16 @@ Puis pour jouer les *playbooks* :
 - Pour configurer les PyCons : `ansible-playbook pycons.yml`
 - Pour configurer Passbolt : `ansible-playbook passbolt.yml`
 
+
+## Faire, ne pas faire
+
+Faire : Configurer les machines : apt install, fichiers de
+configuration, utilisateurs, ...
+
+Ne pas faire : Deployer. C'est le rôle de la CI (Github Actions, ...).
+
+
 # Servers
-
-Dependencies:
- - tschifftner.exim4_sendonly
- - julienpalard.nginx_letsencrypt
- - https://github.com/laxathom/ansible-role-passbolt
-
 
 ## TODO
 
@@ -38,6 +40,13 @@ Dependencies:
 - [ ] Rediriger le sous domaine afpyro.afpy.org vers autre chose.
 - [ ] Sauvegarder puis supprimer la jail afpyro
 - [ ] Setup watchghost
+
+
+## deb.afpy.org
+
+La seule machine déployée via Ansible.
+
+fingerprint: `SHA256:xVC4sYYdmDSbJP6JWZUxApzHdbAj1p3uZlOEIksXrMA`.
 
 
 ## rainette.afpy.org

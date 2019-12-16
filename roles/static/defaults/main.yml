@@ -1,6 +1,0 @@
-static_user: pycon2010
-static_https: false
-static_domain: some_static_website.pycon.fr
-static_repo: https://github.com/AFPy/pyconfr_2010
-static_path_in_repo: /
-static_home: "/srv/{{ static_user }}/"
