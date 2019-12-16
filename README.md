@@ -1,3 +1,26 @@
+# Overview
+
+On découpe nos *playbooks* Ansible par rôles :
+
+- `site.yml`: Inclu tous les autres, pratique pour tout exécuter.
+- `pycon.yml`: Pour les pycon.fr
+- `passbolt.yml`: Pour passbolt.
+- `backup.yml`: Configure rsnapshot pour sauvegarder nos serveurs.
+
+En partant de là, on peut utiliser les commandes suivantes:
+
+D'abord installer Ansible dans un venv les dépendances :
+
+- pip install ansible
+- ansible-galaxy install julienpalard.nginx_letsencrypt
+- ansible-galaxy install tschifftner.exim4_sendonly
+
+Puis pour jouer les *playbooks* :
+
+- Pour tout relancer : `ansible-playbook site.yml`
+- Pour configurer les PyCons : `ansible-playbook pycons.yml`
+- Pour configurer Passbolt : `ansible-playbook passbolt.yml`
+
 # Servers
 
 Dependencies:
