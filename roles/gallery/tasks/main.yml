@@ -8,7 +8,6 @@
 - name: Gallery user
   user:
     name: "{{ gallery_user }}"
-    shell: /bin/false
     system: yes
     home: "{{ gallery_home }}"
 

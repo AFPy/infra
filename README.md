@@ -1,7 +1,8 @@
 # Servers
 
 Dependencies:
- - tschifftner.exim4_sendonly from ansible galaxy
+ - tschifftner.exim4_sendonly
+ - julienpalard.nginx_letsencrypt
  - https://github.com/laxathom/ansible-role-passbolt
 
 

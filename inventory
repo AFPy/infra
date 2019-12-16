@@ -1,11 +1,11 @@
 [gallery]
-163.172.45.2
+51.159.55.117
 
 [pycons]
-163.172.45.2
+51.159.55.117
 
 [rsnapshoters]
 10.0.0.2  # Yes it's on my lan, I'm just testing.
 
 [rsnapshotted]
-163.172.45.2
+51.159.55.117

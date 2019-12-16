@@ -1,53 +1,65 @@
 ---
 
-
 - hosts: all
-  roles: [common]
+  tasks:
+    - name: Common role
+      include_role: name=common
+      tags: common
 
 - hosts: gallery
-  roles: [gallery]
-  vars:
-    gallery_https: true
+  tasks:
+    - name: Setup sigal of paullaroid.pycon.fr
+      include_role: name=gallery
+      vars:
+        gallery_https: true
+        gallery_user: gallery
+        gallery_domain: paullaroid.pycon.fr
+        gallery_repo: https://github.com/AFPy/pycon-fr-gallery.git
+        gallery_home: /srv/gallery/
 
 - hosts: pycons
-  roles: [pelican]
-  vars:
-    pelican_user: pycon2010
-    pelican_https: true
-    pelican_domain: 2010.pycon.fr
-    pelican_repo: https://github.com/AFPy/pyconfr_2010
-    pelican_path_in_repo: 2010/
-    pelican_home: "/srv/{{ pelican_user }}/"
+  tasks:
+    - name: Setup PyCon Fr 2010
+      include_role: name=pelican
+      vars:
+        pelican_user: pycon2010
+        pelican_https: true
+        pelican_domain: 2010.pycon.fr
+        pelican_repo: https://github.com/AFPy/pyconfr_2010
+        pelican_path_in_repo: 2010/
+        pelican_home: "/srv/{{ pelican_user }}/"
 
-- hosts: pycons
-  roles: [pelican]
-  vars:
-    pelican_user: pycon2011
-    pelican_https: true
-    pelican_domain: 2011.pycon.fr
-    pelican_repo: https://github.com/AFPy/pyconfr_2010
-    pelican_path_in_repo: 2011/
-    pelican_home: "/srv/{{ pelican_user }}/"
+    - name: Setup PyConFr 2011
+      include_role: name=pelican
+      vars:
+        pelican_user: pycon2011
+        pelican_https: true
+        pelican_domain: 2011.pycon.fr
+        pelican_repo: https://github.com/AFPy/pyconfr_2010
+        pelican_path_in_repo: 2011/
+        pelican_home: "/srv/{{ pelican_user }}/"
 
-- hosts: pycons
-  roles: [static]
-  vars:
-    static_user: pycon2012
-    static_https: true
-    static_domain: 2012.pycon.fr
-    static_repo: https://github.com/AFPy/pyconfr_2012
+    - name: Setup PyConFr 2012
+      include_role: name=static
+      vars:
+        static_user: pycon2012
+        static_https: true
+        static_domain: 2012.pycon.fr
+        static_repo: https://github.com/AFPy/pyconfr_2012
 
 - hosts: rsnapshoters
-  roles: [rsnapshoter]
-  vars:
-    rsnapshotted_hosts: "{{ groups.rsnapshotted }}"
-    rsnapshot_backups:
-      - remote: passbolt.afpy.org:/srv/backups/
-        path: passbolt.afpy.org/
-      - remote: passbolt.afpy.org:/srv/passbolt/www/webroot/img/public/
-        path: passbolt.afpy.org/
-      - remote: passbolt.afpy.org:/srv/passbolt/www/config/
-        path: passbolt.afpy.org/
+  tasks:
+    - name: Setup rsnapshot cron
+      include_role: name=rsnapshoter
+      vars:
+        rsnapshotted_hosts: "{{ groups.rsnapshotted }}"
+        rsnapshot_backups:
+          - remote: passbolt.afpy.org:/srv/backups/
+            path: passbolt.afpy.org/
+          - remote: passbolt.afpy.org:/srv/passbolt/www/webroot/img/public/
+            path: passbolt.afpy.org/
+          - remote: passbolt.afpy.org:/srv/passbolt/www/config/
+            path: passbolt.afpy.org/
 
 - hosts: rsnapshotted
   tasks:

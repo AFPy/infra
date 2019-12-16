@@ -1,4 +1,6 @@
 ---
 
 dependencies:
-  - { role: letsencrypt, domains: ["{{ pelican_domain }}"] }
+  - role: julienpalard.nginx_letsencrypt
+    certificates: "{{ [[ pelican_domain ]] }}"
+    when: pelican_https
