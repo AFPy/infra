@@ -1,0 +1,25 @@
+---
+
+- hosts: rsnapshoters
+  roles: [common]
+  tasks:
+    - name: Setup rsnapshot cron
+      include_role: name=rsnapshoter
+      vars:
+        rsnapshotted_hosts: "{{ groups.rsnapshotted }}"
+        rsnapshot_backups:
+          - remote: passbolt.afpy.org:/srv/backups/
+            path: passbolt.afpy.org/
+          - remote: passbolt.afpy.org:/srv/passbolt/www/webroot/img/public/
+            path: passbolt.afpy.org/
+          - remote: passbolt.afpy.org:/srv/passbolt/www/config/
+            path: passbolt.afpy.org/
+
+- hosts: rsnapshotted
+  roles: [common]
+  tasks:
+    - name: Install rsync
+      package:
+        name: rsync
+        state: present
+      tags: rsnapshot
