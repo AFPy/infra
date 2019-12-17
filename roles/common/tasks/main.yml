@@ -1,6 +1,10 @@
 ---
 
 - block:
+  - name: Configure hostname
+    hostname:
+      name: "{{ inventory_hostname_short }}"
+
   - name: Remove /etc/apt/sources.list (May contain cdroms…)
     file:
       path: /etc/apt/sources.list

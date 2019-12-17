@@ -1,11 +1,11 @@
 [webservers]
-51.159.55.117
+deb.afpy.org
 
 [rsnapshoters]
-10.0.0.2  # Yes it's on my lan, I'm just testing.
+silence.local  # Yes it's on Julien's LAN.
 
 [rsnapshotted]
-51.159.55.117
+deb.afpy.org
 
 [passbolt]
-51.159.55.117
+deb.afpy.org
