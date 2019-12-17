@@ -1,0 +1,102 @@
+---
+
+- hosts: webservers
+  vars:
+    public_deploy_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINbgxOufHY7SxQrJNTlHmye+xeNHBA1O5SGtGhGeOVZM"
+  tasks:
+    - name: Basic setup
+      include_role: name=common
+
+    - name: Configure french locale
+      locale_gen: name="{{ item }}" state=present
+      with_items:
+          - en_US.UTF-8
+          - fr_FR.UTF-8
+
+    - name: Install requirements
+      apt:
+        state: present
+        name: [nginx, python3-passlib]  # passlib to generate htpasswd
+
+    - name: Generate AFPy admin htpasswd
+      htpasswd:
+        path: "/etc/nginx/afpy.org.htpasswd"
+        name: "{{ item.username }}"
+        password: "{{ item.password }}"
+        owner: root
+        group: www-data
+        mode: 0640
+      loop: "{{ afpy_org_admins }}"
+      loop_control:
+        label: "{{ item.username }}"
+      notify: reload nginx
+
+    - name: Setup afpy.org
+      include_role: name=julienpalard.static_website
+      vars:
+        owner: afpy-org
+        domain: afpy.org
+        extra_certificates: [www.afpy.org]
+        nginx_extra: |
+          location / {
+              proxy_pass http://unix:/run/afpy-org/website.sock;
+          }
+
+          location /admin/ {
+              auth_basic "Administration";
+              auth_basic_user_file afpy.org.htpasswd;
+              proxy_pass http://unix:/run/afpy-org/website.sock;
+          }
+
+    - name: Initial clone
+      become: true
+      become_user: afpy-org
+      git:
+        repo: https://github.com/AFPy/site/
+        dest: /home/afpy-org/src/
+        update: no
+
+    - name: pip install AFPy website
+      become: true
+      become_user: afpy-org
+      pip:
+        name: /home/afpy-org/src/
+        virtualenv_command: /usr/bin/python3 -m venv
+        virtualenv: "/home/afpy-org/venv/"
+
+    - name: pip install gunicorn
+      become: true
+      become_user: afpy-org
+      pip:
+        name: gunicorn
+        virtualenv_command: /usr/bin/python3 -m venv
+        virtualenv: "/home/afpy-org/venv/"
+
+    - name: systemd afpy.org service
+      copy:
+        dest: /etc/systemd/system/afpy-org.service
+        content: |
+          [Unit]
+          Description=AFPy website
+          After=network.target
+
+          [Service]
+          PIDFile=/run/afpy-org/website.pid
+          User=afpy-org
+          Group=afpy-org
+          RuntimeDirectory=afpy-org
+          WorkingDirectory=/home/afpy-org/src/
+          ExecStart=/home/afpy-org/venv/bin/gunicorn --pid /run/afpy-org/website.pid \
+                    --bind unix:/run/afpy-org/website.sock wsgi
+          ExecReload=/bin/kill -s HUP $MAINPID
+          ExecStop=/bin/kill -s TERM $MAINPID
+          PrivateTmp=true
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - service: name=afpy-org state=started enabled=yes
+
+  handlers:
+    - name: reload nginx
+      service: name=nginx state=reloaded
