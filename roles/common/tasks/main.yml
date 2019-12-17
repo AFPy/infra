@@ -5,6 +5,32 @@
     hostname:
       name: "{{ inventory_hostname_short }}"
 
+  - package: name=nftables state=present
+
+  - service: name=nftables enabled=yes state=started daemon_reload=yes
+
+  - copy:
+      content: |
+        #!/usr/sbin/nft -f
+
+        flush ruleset
+
+        table inet filter {
+            chain input {
+                type filter hook input priority 0;
+                iif lo accept
+                ct state established,related accept
+                tcp dport { ssh, http, https } ct state new accept
+                counter drop
+            }
+        }
+
+      dest: /etc/nftables.conf
+      owner: root
+      group: root
+      mode: 0755
+    notify: reload nftables
+
   - name: Remove /etc/apt/sources.list (May contain cdroms…)
     file:
       path: /etc/apt/sources.list

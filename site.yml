@@ -1,5 +1,6 @@
 ---
 
+- import_playbook: common.yml
 - import_playbook: pycon.fr.yml
 - import_playbook: afpy.org.yml
 # - import_playbook: passbolt.yml  # See https://github.com/laxathom/ansible-role-passbolt/issues/15
