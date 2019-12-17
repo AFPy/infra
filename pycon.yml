@@ -10,21 +10,21 @@
     - name: Setup PyConFr 2010
       include_role: name=julienpalard.static_website
       vars:
-        owner: pycon2010
+        owner: pyconfr2010
         domain: 2010.pycon.fr
         path: /var/www/2010.pycon.fr/
 
     - name: Setup PyConFr 2011
       include_role: name=julienpalard.static_website
       vars:
-        owner: pycon2011
+        owner: pyconfr2011
         domain: 2011.pycon.fr
         path: /var/www/2011.pycon.fr/
 
     - name: Setup PyConFr 2012
       include_role: name=julienpalard.static_website
       vars:
-        owner: pycon2012
+        owner: pyconfr2012
         domain: 2012.pycon.fr
         path: /var/www/2012.pycon.fr/
 
