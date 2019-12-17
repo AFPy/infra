@@ -21,6 +21,7 @@
       tags: backup
 
   vars:
+    passbolt_version: "2.12.0"
     passbolt_tmpdir: "/srv/passbolt-tmp/"
     passbolt_homedir: "/srv/passbolt/"
     passbolt_webroot: "/srv/passbolt/www/"
