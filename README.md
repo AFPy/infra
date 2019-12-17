@@ -9,9 +9,9 @@ On découpe nos *playbooks* Ansible par rôles :
 
 En partant de là, on peut utiliser les commandes suivantes:
 
-D'abord installer Ansible dans un venv les dépendances :
+Après avoir cloné ce repo, installé Ansible dans un venv, installez
+les roles nécessaires via :
 
-- pip install ansible
 - ansible-galaxy install -r requirements.yml
 
 Puis pour jouer les *playbooks* :
