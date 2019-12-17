@@ -16,7 +16,7 @@
     - name: Install requirements
       apt:
         state: present
-        name: [nginx, python3-passlib]  # passlib to generate htpasswd
+        name: [nginx, python3-passlib, sudo]  # passlib to generate htpasswd
 
     - name: Generate AFPy admin htpasswd
       htpasswd:
@@ -81,6 +81,13 @@
           location = "/news/soiree-python-a-marseille-le-9-2-2018" { return 301 https://www.afpy.org/posts/actualites/1518042512; }
           location = "/news/meetup-python-amiens-1" { return 301 https://www.afpy.org/posts/actualites/1523519011; }
 
+    - name: afpy user can reload own website
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: afpy-org
+        line: "afpy-org ALL = NOPASSWD: /bin/systemctl restart afpy-org.service"
+        validate: /usr/sbin/visudo -cf %s
 
     - name: Initial clone
       become: true
@@ -122,7 +129,7 @@
           WorkingDirectory=/home/afpy-org/src/
           ExecStart=/home/afpy-org/venv/bin/gunicorn -w 4 \
                     --pid /run/afpy-org/website.pid \
-                    --bind unix:/run/afpy-org/website.sock wsgi
+                    --bind unix:/run/afpy-org/website.sock afpy:app
           ExecReload=/bin/kill -s HUP $MAINPID
           ExecStop=/bin/kill -s TERM $MAINPID
           PrivateTmp=true
