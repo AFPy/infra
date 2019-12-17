@@ -1,7 +1,7 @@
 ---
 
-- hosts: pycons
-  roles: [tschifftner.exim4_sendonly, passbolt, common]
+- hosts: passbolt
+  roles: [common, tschifftner.exim4_sendonly, laxathom.passbolt]
   tasks:
     - name: Create passbolt backup directory
       file:
@@ -33,7 +33,7 @@
     passbolt_dbpass: "{{ vault_passbolt_dbpass }}"
     passbolt_smtp_sender_email: "passbolt@afpy.org"
 
-    passbolt_php_fpm_includedir: /etc/php/7.0/fpm/pool.d/
+    passbolt_php_fpm_includedir: /etc/php/7.3/fpm/pool.d/
     passbolt_php_fpm_listen: /var/run/php/fpm.sock
     passbolt_php_fpm_user: passbolt
     passbolt_php_fpm_group: passbolt
@@ -59,7 +59,6 @@
     php_webserver_daemon: "nginx"
     php_enable_php_fpm: true
     php_enable_webserver: false
-    php_default_version_debian: "7.3"
     nginx_sites:
         passbolt_http:
             - listen 80
