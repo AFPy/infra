@@ -11,8 +11,12 @@ En partant de là, on peut utiliser les commandes suivantes:
 
 D'abord installer Ansible dans un venv les dépendances :
 
-- pip install ansible
-- ansible-galaxy install -r requirements.yml
+- `git clone https://github.com/AFPy/infra`
+- `cd infra`
+- `python3 -m venv venv`
+- `source venv/bin/activate`
+- `pip install ansible`
+- `ansible-galaxy install -r requirements.yml`
 
 Puis pour jouer les *playbooks* :
 
