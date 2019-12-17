@@ -65,6 +65,8 @@
         passbolt_http:
             - listen 80
             - server_name "{{ passbolt_domain }}"
+            - access_log /var/log/nginx/passbolt.afpy.org-access.log
+            - error_log /var/log/nginx/passbolt.afpy.org-error.log
             - location / {
               return 301 https://{{ passbolt_domain }}$request_uri;
               }
@@ -73,6 +75,8 @@
             - listen 443 ssl
             - server_name passbolt.afpy.org
             - server_tokens off
+            - access_log /var/log/nginx/passbolt.afpy.org-access.log
+            - error_log /var/log/nginx/passbolt.afpy.org-error.log
             - include snippets/letsencrypt-{{ passbolt_domain }}.conf
             - root {{ passbolt_webroot }}/webroot/
             - location / { try_files $uri /index.php$is_args$args; }
