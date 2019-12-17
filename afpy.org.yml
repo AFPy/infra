@@ -39,12 +39,18 @@
         extra_certificates: [www.afpy.org]
         nginx_extra: |
           location / {
+              include proxy_params;
               proxy_pass http://unix:/run/afpy-org/website.sock;
+          }
+
+          location /static/ {
+              alias /home/afpy-org/src/static/;
           }
 
           location /admin/ {
               auth_basic "Administration";
               auth_basic_user_file afpy.org.htpasswd;
+              include proxy_params;
               proxy_pass http://unix:/run/afpy-org/website.sock;
           }
 
@@ -86,7 +92,8 @@
           Group=afpy-org
           RuntimeDirectory=afpy-org
           WorkingDirectory=/home/afpy-org/src/
-          ExecStart=/home/afpy-org/venv/bin/gunicorn --pid /run/afpy-org/website.pid \
+          ExecStart=/home/afpy-org/venv/bin/gunicorn -w 4 \
+                    --pid /run/afpy-org/website.pid \
                     --bind unix:/run/afpy-org/website.sock wsgi
           ExecReload=/bin/kill -s HUP $MAINPID
           ExecStop=/bin/kill -s TERM $MAINPID
