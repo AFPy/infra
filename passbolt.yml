@@ -37,6 +37,8 @@
     passbolt_php_fpm_listen: /var/run/php/fpm.sock
     passbolt_php_fpm_user: passbolt
     passbolt_php_fpm_group: passbolt
+    passbolt_php_fpm_listen_owner: www-data
+    passbolt_php_fpm_listen_group: www-data
 
     passbolt_dbport: 3306
     mysql_root_username: root

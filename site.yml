@@ -1,5 +1,5 @@
 ---
 
 - import_playbook: pycon.yml
-- import_playbook: passbolt.yml
+# - import_playbook: passbolt.yml  # See https://github.com/laxathom/ansible-role-passbolt/issues/15
 - import_playbook: backup.yml

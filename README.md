@@ -19,6 +19,7 @@ Puis pour jouer les *playbooks* :
 - Pour tout relancer : `ansible-playbook site.yml`
 - Pour configurer les PyCons : `ansible-playbook pycons.yml`
 - Pour configurer Passbolt : `ansible-playbook passbolt.yml`
+  (attention voir [#15](https://github.com/laxathom/ansible-role-passbolt/issues/15)).
 
 
 ## Faire, ne pas faire
