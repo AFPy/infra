@@ -11,7 +11,6 @@
         nginx_owner: logs-afpy-org
         nginx_domain: logs.afpy.org
         nginx_certificates: [logs.afpy.org]
-        nginx_path: /var/www/logs.afpy.org/
         nginx_public_deploy_key: "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA8BxBkDeX8exqUzvU813yOUx7mu1Ax5cfntFJo8a80CZ4m/jKNXwqd5eW7Vp6hVNvKuKcb58SgUzQ/Yl2AaMqF2KMD+aAwSYaqtJCFVYG+zjpGhQuxvQVKb9Pvdu9clpRHAYUw9bD/GG2YLdaryLqr54XCF6h/bCc6gHcj/UhByoQJwCbkBTCvCzHHEOe+Je2RAQc5nDWACXffO1LduHtjDvRH5wpnfubYy96fLfwFhFNNvci4vRxKA0JTFlU5URds5Y+Uk5pH+yRzN3DBZhdXTg5w2Ox9d+Xd5NxpInMiHJzI+Ldax7DolYXEFx5ZT+gSOo3VOzvo6fjHYEp2LALOQ== gawel@boiboite"
         nginx_conf: |
           server
@@ -29,7 +28,6 @@
               server_name logs.afpy.org;
               access_log /var/log/nginx/logs.afpy.org-access.log;
               error_log /var/log/nginx/logs.afpy.org-error.log;
-              root /var/www/logs.afpy.org/;
               include snippets/letsencrypt-logs.afpy.org.conf;
               location /
               {
@@ -37,6 +35,13 @@
                   proxy_pass http://unix:/run/logs-afpy-org/website.sock;
               }
           }
+
+    - name: Logs are written by alain
+      file:
+        path: /var/www/logs.afpy.org/
+        owner: alain
+        mode: 0755
+        state: directory
 
     - name: logs-afpy-org user can reload own website
       lineinfile:

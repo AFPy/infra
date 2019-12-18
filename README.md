@@ -37,7 +37,7 @@ c'est le rôle de la CI (Github Actions, ...), pas de nos playbooks.
 
 ## TODO
 
-- [ ] Migrer alain
+- [ ] Github Actions sur Alain (déployer au push).
 - [ ] Migrer pycon 2012
 - [ ] Migrer pycon 2013
 - [ ] Migrer pycon 2014
