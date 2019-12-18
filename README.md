@@ -113,29 +113,16 @@ Est une machine de test de Julien, configurée via Ansible, elle héberge:
 
 On utilies ces rôles Ansible :
 
+## julienpalard.nginx
 
-## gallery
-
-C'est le rôle pour installer https://github.com/AFPy/pycon-fr-gallery
-sur http://paullaroid.pycon.fr/.
-
-Une démo est actuellement sur une machine de test de Julien:
-
-    curl --resolve paullaroid.pycon.fr:80:163.172.45.2 http://paullaroid.pycon.fr
-
-
-## letsencrypt
-
-*letsencrypt* est un rôle pour gérer un certificat HTTPS et son stub
-nginx pour un domaine. Il s'utilise typiquement comme dépendance d'un
-autre rôle, voir le `meta/main.yml` du rôle `gallery` par exemple.
+Voir la [doc](https://github.com/JulienPalard/ansible-role-nginx).
 
 
 ## common
 
 *common* est un rôle "de base" permettant d'avoir une conf "normale"
 sur toutes nos machines (emacs et vim installés, nos authorized-keys,
-pas de mlocate, ce genre de broutilles)
+pas de mlocate, hostname propre, firewall, ce genre de broutilles).
 
 
 # Backups

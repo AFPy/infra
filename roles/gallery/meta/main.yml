@@ -1,6 +1,0 @@
----
-
-dependencies:
-  - role: julienpalard.nginx_letsencrypt
-    when: gallery_https
-    certificates: "{{ [[ gallery_domain]] }}"

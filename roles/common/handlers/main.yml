@@ -1,0 +1,4 @@
+---
+
+- name: reload nftables
+  service: name=nftables state=reloaded
