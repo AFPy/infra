@@ -8,29 +8,33 @@
       include_role: name=common
 
     - name: Setup PyConFr 2010
-      include_role: name=julienpalard.static_website
+      include_role: name=julienpalard.nginx
       vars:
-        owner: pyconfr2010
-        domain: 2010.pycon.fr
-        path: /var/www/2010.pycon.fr/
+        nginx_owner: pyconfr2010
+        nginx_domain: 2010.pycon.fr
+        nginx_certificates: [2010.pycon.fr]
+        nginx_path: /var/www/2010.pycon.fr/
 
     - name: Setup PyConFr 2011
-      include_role: name=julienpalard.static_website
+      include_role: name=julienpalard.nginx
       vars:
-        owner: pyconfr2011
-        domain: 2011.pycon.fr
-        path: /var/www/2011.pycon.fr/
+        nginx_owner: pyconfr2011
+        nginx_domain: 2011.pycon.fr
+        nginx_certificates: [2011.pycon.fr]
+        nginx_path: /var/www/2011.pycon.fr/
 
     - name: Setup PyConFr 2012
-      include_role: name=julienpalard.static_website
+      include_role: name=julienpalard.nginx
       vars:
-        owner: pyconfr2012
-        domain: 2012.pycon.fr
-        path: /var/www/2012.pycon.fr/
+        nginx_owner: pyconfr2012
+        nginx_domain: 2012.pycon.fr
+        nginx_certificates: [2012.pycon.fr]
+        nginx_path: /var/www/2012.pycon.fr/
 
     - name: Setup sigal of paullaroid.pycon.fr
-      include_role: name=julienpalard.static_website
+      include_role: name=julienpalard.nginx
       vars:
-        owner: paullaroid
-        domain: paullaroid.pycon.fr
-        path: /var/www/paullaroid.pycon.fr/
+        nginx_owner: paullaroid
+        nginx_domain: paullaroid.pycon.fr
+        nginx_certificates: [paullaroid.pycon.fr]
+        nginx_path: /var/www/paullaroid.pycon.fr/

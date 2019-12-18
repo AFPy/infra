@@ -1,6 +1,6 @@
 ---
 roles:
-  - src: julienpalard.static_website
+  - src: julienpalard.nginx
     version: master
   - src: tschifftner.exim4_sendonly
     version: master

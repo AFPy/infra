@@ -32,54 +32,75 @@
       notify: reload nginx
 
     - name: Setup afpy.org
-      include_role: name=julienpalard.static_website
+      include_role: name=julienpalard.nginx
       vars:
-        owner: afpy-org
-        domain: afpy.org
-        extra_certificates: [www.afpy.org]
-        nginx_extra: |
-          location / {
-              include proxy_params;
-              proxy_pass http://unix:/run/afpy-org/website.sock;
+        nginx_owner: afpy-org
+        nginx_domain: afpy.org
+        nginx_certificates: [afpy.org, www.afpy.org]
+        nginx_conf: |
+          server
+          {
+              listen 80;
+              server_name .afpy.org;
+              access_log /var/log/nginx/afpy.org-access.log;
+              error_log /var/log/nginx/afpy.org-error.log;
+              return 301 https://$host$request_uri;
           }
 
-          location /static/ {
-              alias /home/afpy-org/src/static/;
-          }
+          server
+          {
+              listen 443 ssl;
+              server_name .afpy.org;
+              access_log /var/log/nginx/afpy.org-access.log;
+              error_log /var/log/nginx/afpy.org-error.log;
+              root /var/www/afpy.org/;
+              include snippets/letsencrypt-afpy.org.conf;
+              index index.html;
+              location /
+              {
+                  include proxy_params;
+                  proxy_pass http://unix:/run/afpy-org/website.sock;
+              }
 
-          location /admin/ {
-              auth_basic "Administration";
-              auth_basic_user_file afpy.org.htpasswd;
-              include proxy_params;
-              proxy_pass http://unix:/run/afpy-org/website.sock;
-          }
+              location /static/
+              {
+                  alias /home/afpy-org/src/static/;
+              }
 
-          location ~ ^/doc/python/(.*)$ {return 301 https://docs.python.org/fr/$1;}
-          location = /logo.png { return 301 https://www.afpy.org/static/images/logo.svg; }
-          location = /offres-demploi/RSS { return 301 https://www.afpy.org/feed/emplois/rss.xml; }
-          location = "/news/aggregator" { return 301 https://www.afpy.org/posts/actualites/1345367761; }
-          location = "/news/pyconfr-2012" { return 301 https://www.afpy.org/posts/actualites/1345377295; }
-          location = "/news/le-nouveau-site-de-lafpy" { return 301 https://www.afpy.org/posts/actualites/1364754937; }
-          location = "/news/un-hackathon-a-paris" { return 301 https://www.afpy.org/posts/actualites/1373474773; }
-          location = "/news/julython-contribuez-a-des-projets-opensource" { return 301 https://www.afpy.org/posts/actualites/1373475142; }
-          location = "/news/lappel-a-contribution-pour-pyconfr13-est-ouvert" { return 301 https://www.afpy.org/posts/actualites/1374511126; }
-          location = "/news/naissance-dune-communaute-saltstack-francophone" { return 301 https://www.afpy.org/posts/actualites/1392304489; }
-          location = "/news/pycon-fr-2014" { return 301 https://www.afpy.org/posts/actualites/1392311614; }
-          location = "/news/pyconfr15-ou-nous-emmeneras-tu-cette-annee" { return 301 https://www.afpy.org/posts/actualites/1423208987; }
-          location = "/news/pycon-fr-2015-we-want-you" { return 301 https://www.afpy.org/posts/actualites/1433966273; }
-          location = "/news/pycon-fr-2015-lappel-a-conferencier-est-prolonge" { return 301 https://www.afpy.org/posts/actualites/1438067732; }
-          location = "/news/pv-de-lassemblee-generale-ordinaire-2017" { return 301 https://www.afpy.org/posts/actualites/1506345679; }
-          location = "/news/code-en-seine" { return 301 https://www.afpy.org/posts/actualites/1507801636; }
-          location = "/news/rencontre-python-a-lyon" { return 301 https://www.afpy.org/posts/actualites/1508335902; }
-          location = "/news/cours-en-ligne-python-3-des-fondamentaux-aux-concepts-avances-du-langage" { return 301 https://www.afpy.org/posts/actualites/1509982321; }
-          location = "/news/atelier-de-contribution-a-ansible-a-paris" { return 301 https://www.afpy.org/posts/actualites/1509982513; }
-          location = "/news/rencontre-python-a-lyon-une-carte-pour-les-amener-tous-et-dans-la-connaissance-les-lier" { return 301 https://www.afpy.org/posts/actualites/1510650668; }
-          location = "/news/hackaton-la-boite-incubateur-imt-atlantique-rennes" { return 301 https://www.afpy.org/posts/actualites/1511358816; }
-          location = "/news/ou-sont-mes-variables" { return 301 https://www.afpy.org/posts/actualites/1512378516; }
-          location = "/news/a-vos-framewoks" { return 301 https://www.afpy.org/posts/actualites/1512996562; }
-          location = "/news/atelier-contribuez-a-la-traduction-de-la-doc-de-python-en-francais" { return 301 https://www.afpy.org/posts/actualites/1515405342; }
-          location = "/news/soiree-python-a-marseille-le-9-2-2018" { return 301 https://www.afpy.org/posts/actualites/1518042512; }
-          location = "/news/meetup-python-amiens-1" { return 301 https://www.afpy.org/posts/actualites/1523519011; }
+              location /admin/ {
+                  auth_basic "Administration";
+                  auth_basic_user_file afpy.org.htpasswd;
+                  include proxy_params;
+                  proxy_pass http://unix:/run/afpy-org/website.sock;
+              }
+
+              location ~ ^/doc/python/(.*)$ {return 301 https://docs.python.org/fr/$1;}
+              location = /logo.png { return 301 https://www.afpy.org/static/images/logo.svg; }
+              location = /offres-demploi/RSS { return 301 https://www.afpy.org/feed/emplois/rss.xml; }
+              location = "/news/aggregator" { return 301 https://www.afpy.org/posts/actualites/1345367761; }
+              location = "/news/pyconfr-2012" { return 301 https://www.afpy.org/posts/actualites/1345377295; }
+              location = "/news/le-nouveau-site-de-lafpy" { return 301 https://www.afpy.org/posts/actualites/1364754937; }
+              location = "/news/un-hackathon-a-paris" { return 301 https://www.afpy.org/posts/actualites/1373474773; }
+              location = "/news/julython-contribuez-a-des-projets-opensource" { return 301 https://www.afpy.org/posts/actualites/1373475142; }
+              location = "/news/lappel-a-contribution-pour-pyconfr13-est-ouvert" { return 301 https://www.afpy.org/posts/actualites/1374511126; }
+              location = "/news/naissance-dune-communaute-saltstack-francophone" { return 301 https://www.afpy.org/posts/actualites/1392304489; }
+              location = "/news/pycon-fr-2014" { return 301 https://www.afpy.org/posts/actualites/1392311614; }
+              location = "/news/pyconfr15-ou-nous-emmeneras-tu-cette-annee" { return 301 https://www.afpy.org/posts/actualites/1423208987; }
+              location = "/news/pycon-fr-2015-we-want-you" { return 301 https://www.afpy.org/posts/actualites/1433966273; }
+              location = "/news/pycon-fr-2015-lappel-a-conferencier-est-prolonge" { return 301 https://www.afpy.org/posts/actualites/1438067732; }
+              location = "/news/pv-de-lassemblee-generale-ordinaire-2017" { return 301 https://www.afpy.org/posts/actualites/1506345679; }
+              location = "/news/code-en-seine" { return 301 https://www.afpy.org/posts/actualites/1507801636; }
+              location = "/news/rencontre-python-a-lyon" { return 301 https://www.afpy.org/posts/actualites/1508335902; }
+              location = "/news/cours-en-ligne-python-3-des-fondamentaux-aux-concepts-avances-du-langage" { return 301 https://www.afpy.org/posts/actualites/1509982321; }
+              location = "/news/atelier-de-contribution-a-ansible-a-paris" { return 301 https://www.afpy.org/posts/actualites/1509982513; }
+              location = "/news/rencontre-python-a-lyon-une-carte-pour-les-amener-tous-et-dans-la-connaissance-les-lier" { return 301 https://www.afpy.org/posts/actualites/1510650668; }
+              location = "/news/hackaton-la-boite-incubateur-imt-atlantique-rennes" { return 301 https://www.afpy.org/posts/actualites/1511358816; }
+              location = "/news/ou-sont-mes-variables" { return 301 https://www.afpy.org/posts/actualites/1512378516; }
+              location = "/news/a-vos-framewoks" { return 301 https://www.afpy.org/posts/actualites/1512996562; }
+              location = "/news/atelier-contribuez-a-la-traduction-de-la-doc-de-python-en-francais" { return 301 https://www.afpy.org/posts/actualites/1515405342; }
+              location = "/news/soiree-python-a-marseille-le-9-2-2018" { return 301 https://www.afpy.org/posts/actualites/1518042512; }
+              location = "/news/meetup-python-amiens-1" { return 301 https://www.afpy.org/posts/actualites/1523519011; }
+          }
 
     - name: afpy user can reload own website
       lineinfile:
