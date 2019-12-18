@@ -1,0 +1,70 @@
+---
+
+# This is for Thunderbrid autoconfiguration.
+
+- hosts: webservers
+  tasks:
+    - name: Basic setup
+      include_role: name=common
+
+    - name: Nginx site for autoconfig
+      include_role: name=julienpalard.nginx
+      vars:
+        nginx_owner: www-data
+        nginx_domain: autoconfig.afpy.org
+        nginx_certificates: [autoconfig.afpy.org, autoconfig.pycon.fr]
+        nginx_path: /var/www/autoconfig.afpy.org
+        nginx_conf: |
+          server
+          {
+              listen 80;
+              server_name autoconfig.afpy.org autoconfig.pycon.fr;
+              access_log /var/log/nginx/autoconfig.afpy.org-access.log;
+              error_log /var/log/nginx/autoconfig.afpy.org-error.log;
+              return 301 https://$host$request_uri;
+          }
+
+          server
+          {
+              listen 443 ssl;
+              server_name autoconfig.afpy.org autoconfig.pycon.fr;
+              access_log /var/log/nginx/autoconfig.afpy.org-access.log;
+              error_log /var/log/nginx/autoconfig.afpy.org-error.log;
+              include snippets/letsencrypt-autoconfig.afpy.org.conf;
+              root /var/www/autoconfig.afpy.org;
+          }
+
+    - name: Create directory hierarchy for autoconfig
+      file:
+        path: /var/www/autoconfig.afpy.org/mail/
+        state: directory
+        mode: 0755
+
+    - name: Create autoconfig file
+      copy:
+        dest: /var/www/autoconfig.afpy.org/mail/config-v1.1.xml
+        mode: 0644
+        content: |
+          <?xml version="1.0" encoding="UTF-8"?>
+          <clientConfig version="1.1">
+            <emailProvider id="afpy.org">
+              <domain>afpy.org</domain>
+              <domain>pycon.fr</domain>
+              <displayName>AFPY</displayName>
+              <displayShortName>AFPY</displayShortName>
+              <incomingServer type="imap">
+                <hostname>mail.afpy.org</hostname>
+                <port>993</port>
+                <socketType>SSL</socketType>
+                <authentication>password-cleartext</authentication>
+                <username>%EMAILADDRESS%</username>
+              </incomingServer>
+              <outgoingServer type="smtp">
+                <hostname>mail.afpy.org</hostname>
+                <port>587</port>
+                <socketType>STARTTLS</socketType>
+                <authentication>password-cleartext</authentication>
+                <username>%EMAILADDRESS%</username>
+              </outgoingServer>
+            </emailProvider>
+          </clientConfig>
