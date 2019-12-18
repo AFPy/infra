@@ -1,0 +1,52 @@
+---
+
+- hosts: alains
+  tasks:
+    - name: La naissance d'Alain
+      user:
+        name: alain
+        system: yes
+
+    - name: Le cerveau d'Alain
+      become: true
+      become_user: alain
+      git:
+        repo: https://github.com/afpy/alain/
+        dest: ~alain/src/
+
+    - name: Alain s'installe dans sa maison
+      become: true
+      become_user: alain
+      pip:
+        name: /home/alain/src/
+        virtualenv_command: /usr/bin/python3 -m venv
+        virtualenv: "/home/alain/venv/"
+
+    - name: Le bazar d'Alain
+      file:
+        state: directory
+        path: /home/alain/log/
+        owner: alain
+        group: alain
+        mode: 0755
+
+    - name: Alain découvre les internets
+      copy:
+        dest: /etc/systemd/system/alain.service
+        content: |
+          [Unit]
+          Description=Alain
+          After=network.target
+
+          [Service]
+          Type=simple
+          ExecStart=/home/alain/venv/bin/irc3 --logdir=/home/alain/log alain.ini
+          User=alain
+          Group=alain
+          WorkingDirectory=/home/alain/src/
+          Restart=on-failure
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - service: name=alain enabled=yes state=started daemon_reload=yes
