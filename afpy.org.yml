@@ -13,16 +13,6 @@
           - en_US.UTF-8
           - fr_FR.UTF-8
 
-    - name: Setup logs.afpy.org
-      include_role: name=julienpalard.nginx
-      vars:
-        nginx_owner: logs-afpy-org
-        nginx_domain: logs.afpy.org
-        nginx_certificates: [logs.afpy.org]
-        nginx_path: /var/www/logs.afpy.org/
-        nginx_public_deploy_key: "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA8BxBkDeX8exqUzvU813yOUx7mu1Ax5cfntFJo8a80CZ4m/jKNXwqd5eW7Vp6hVNvKuKcb58SgUzQ/Yl2AaMqF2KMD+aAwSYaqtJCFVYG+zjpGhQuxvQVKb9Pvdu9clpRHAYUw9bD/GG2YLdaryLqr54XCF6h/bCc6gHcj/UhByoQJwCbkBTCvCzHHEOe+Je2RAQc5nDWACXffO1LduHtjDvRH5wpnfubYy96fLfwFhFNNvci4vRxKA0JTFlU5URds5Y+Uk5pH+yRzN3DBZhdXTg5w2Ox9d+Xd5NxpInMiHJzI+Ldax7DolYXEFx5ZT+gSOo3VOzvo6fjHYEp2LALOQ== gawel@boiboite"
-
-
     - name: Install requirements
       apt:
         state: present
@@ -51,7 +41,7 @@
           server
           {
               listen 80;
-              server_name .afpy.org;
+              server_name www.afpy.org afpy.org;
               access_log /var/log/nginx/afpy.org-access.log;
               error_log /var/log/nginx/afpy.org-error.log;
               return 301 https://$host$request_uri;
@@ -60,7 +50,7 @@
           server
           {
               listen 443 ssl;
-              server_name .afpy.org;
+              server_name www.afpy.org afpy.org;
               access_log /var/log/nginx/afpy.org-access.log;
               error_log /var/log/nginx/afpy.org-error.log;
               root /var/www/afpy.org/;
@@ -116,7 +106,7 @@
       lineinfile:
         path: /etc/sudoers
         state: present
-        regexp: afpy-org
+        regexp: '^afpy-org '
         line: "afpy-org ALL = NOPASSWD: /bin/systemctl restart afpy-org.service"
         validate: /usr/sbin/visudo -cf %s
 

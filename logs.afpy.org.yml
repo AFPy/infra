@@ -1,0 +1,94 @@
+---
+
+- hosts: webservers
+  tasks:
+    - name: Basic setup
+      include_role: name=common
+
+    - name: Setup logs.afpy.org
+      include_role: name=julienpalard.nginx
+      vars:
+        nginx_owner: logs-afpy-org
+        nginx_domain: logs.afpy.org
+        nginx_certificates: [logs.afpy.org]
+        nginx_path: /var/www/logs.afpy.org/
+        nginx_public_deploy_key: "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA8BxBkDeX8exqUzvU813yOUx7mu1Ax5cfntFJo8a80CZ4m/jKNXwqd5eW7Vp6hVNvKuKcb58SgUzQ/Yl2AaMqF2KMD+aAwSYaqtJCFVYG+zjpGhQuxvQVKb9Pvdu9clpRHAYUw9bD/GG2YLdaryLqr54XCF6h/bCc6gHcj/UhByoQJwCbkBTCvCzHHEOe+Je2RAQc5nDWACXffO1LduHtjDvRH5wpnfubYy96fLfwFhFNNvci4vRxKA0JTFlU5URds5Y+Uk5pH+yRzN3DBZhdXTg5w2Ox9d+Xd5NxpInMiHJzI+Ldax7DolYXEFx5ZT+gSOo3VOzvo6fjHYEp2LALOQ== gawel@boiboite"
+        nginx_conf: |
+          server
+          {
+              listen 80;
+              server_name logs.afpy.org;
+              access_log /var/log/nginx/logs.afpy.org-access.log;
+              error_log /var/log/nginx/logs.afpy.org-error.log;
+              return 301 https://$host$request_uri;
+          }
+
+          server
+          {
+              listen 443 ssl;
+              server_name logs.afpy.org;
+              access_log /var/log/nginx/logs.afpy.org-access.log;
+              error_log /var/log/nginx/logs.afpy.org-error.log;
+              root /var/www/logs.afpy.org/;
+              include snippets/letsencrypt-logs.afpy.org.conf;
+              location /
+              {
+                  include proxy_params;
+                  proxy_pass http://unix:/run/logs-afpy-org/website.sock;
+              }
+          }
+
+    - name: logs-afpy-org user can reload own website
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: '^logs-afpy-org '
+        line: "logs-afpy-org ALL = NOPASSWD: /bin/systemctl restart logs-afpy-org.service"
+        validate: /usr/sbin/visudo -cf %s
+
+    - name: Initial clone
+      become: true
+      become_user: logs-afpy-org
+      git:
+        repo: https://github.com/AFPy/AfpyLogs/
+        dest: /home/logs-afpy-org/src/
+        update: no
+
+    - name: pip install logs.afpy.org website
+      become: true
+      become_user: logs-afpy-org
+      pip:
+        name: /home/logs-afpy-org/src/
+        virtualenv_command: /usr/bin/python3 -m venv
+        virtualenv: "/home/logs-afpy-org/venv/"
+
+    - name: systemd logs.afpy.org service
+      copy:
+        dest: /etc/systemd/system/logs-afpy-org.service
+        content: |
+          [Unit]
+          Description=IRC Logs website
+          After=network.target
+
+          [Service]
+          PIDFile=/run/logs-afpy-org/website.pid
+          User=logs-afpy-org
+          Group=logs-afpy-org
+          RuntimeDirectory=logs-afpy-org
+          WorkingDirectory=/home/logs-afpy-org/src/
+          ExecStart=/home/logs-afpy-org/venv/bin/gunicorn -w 2 \
+                    --pid /run/logs-afpy-org/website.pid \
+                    --bind unix:/run/logs-afpy-org/website.sock \
+                    --paste deploy.ini
+          ExecReload=/bin/kill -s HUP $MAINPID
+          ExecStop=/bin/kill -s TERM $MAINPID
+          PrivateTmp=true
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - service: name=logs-afpy-org state=started enabled=yes
+
+  handlers:
+    - name: reload nginx
+      service: name=nginx state=reloaded
