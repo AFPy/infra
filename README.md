@@ -6,6 +6,7 @@ On découpe nos *playbooks* Ansible par rôles :
 - `pycon.yml`: Pour les pycon.fr
 - `passbolt.yml`: Pour passbolt.
 - `backup.yml`: Configure rsnapshot pour sauvegarder nos serveurs.
+- ...
 
 En partant de là, on peut utiliser les commandes suivantes:
 
@@ -25,21 +26,23 @@ Puis pour jouer les *playbooks* :
 ## Faire, ne pas faire
 
 Faire : Configurer les machines : apt install, fichiers de
-configuration, utilisateurs, ...
+configuration, utilisateurs, éventuellement un premier `git clone`
+pour que ça marche si c'est un site statique.
 
-Ne pas faire : Deployer. C'est le rôle de la CI (Github Actions, ...).
+Ne pas faire : Deployer. En dehors de l'éventuel premier git clone,
+c'est le rôle de la CI (Github Actions, ...), pas de nos playbooks.
 
 
 # Servers
 
 ## TODO
 
-- [ ] Rédiger le ansible pour afpy.org, en profiter pour mettre en place du continuous delivery.
-- [ ] Vérifier les versions des Django des pycon 2012, 2013, 2014, 2015
-- [ ] Déployer les django des pycon 2012, 2013, 2014, 2015 via Ansible
-- [ ] Sauvegarder puis supprimer la jail membres
-- [ ] Rediriger le sous domaine afpyro.afpy.org vers autre chose.
-- [ ] Sauvegarder puis supprimer la jail afpyro
+- [ ] Migrer alain
+- [ ] Migrer pycon 2012
+- [ ] Migrer pycon 2013
+- [ ] Migrer pycon 2014
+- [ ] Migrer pycon 2015
+- [ ] Migrer afpyro.afpy.org
 - [ ] Setup watchghost
 
 
@@ -77,10 +80,6 @@ Liste des jails toujours utiles :
 
 Jails en fin de vie :
 
-- membres:
-  - Ancienne gestion des membres (https://github.com/AFPy/AfpyMembers)
-  - 2018-12-21: Daemon arrêté.
-  - 2019-07-04: `ezjail-admin stop membres`
 - afpyro
   - https://afpyro.afpy.org/
   - https://github.com/AFPy/siteafpyro
@@ -98,15 +97,6 @@ On y stocke :
 - http
 - backupdebian
 - ns1
-
-
-## 163.172.45.2
-
-Est une machine de test de Julien, configurée via Ansible, elle héberge:
-
-- paullaroid.pycon.fr
-- pycon2010.pycon.fr
-- pycon2011.pycon.fr
 
 
 # Ansible
