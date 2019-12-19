@@ -38,7 +38,6 @@ c'est le rôle de la CI (Github Actions, ...), pas de nos playbooks.
 ## TODO
 
 - [ ] Github Actions sur Alain (déployer au push).
-- [ ] Migrer afpyro.afpy.org
 - [ ] Setup watchghost
 
 
