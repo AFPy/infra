@@ -160,6 +160,31 @@
 
     - service: name=afpy-org state=started enabled=yes
 
+    - name: Redirect planet.afpy.org
+      include_role: name=julienpalard.nginx
+      vars:
+        nginx_domain: planet.afpy.org
+        nginx_certificates: [planet.afpy.org]
+        nginx_conf: |
+          server
+          {
+              listen 80;
+              server_name planet.afpy.org;
+              access_log /var/log/nginx/planet.afpy.org-access.log;
+              error_log /var/log/nginx/planet.afpy.org-error.log;
+              return 301 https://www.afpy.org/planet/;
+          }
+
+          server
+          {
+              listen 443 ssl;
+              server_name planet.afpy.org;
+              access_log /var/log/nginx/planet.afpy.org-access.log;
+              error_log /var/log/nginx/planet.afpy.org-error.log;
+              include snippets/letsencrypt-planet.afpy.org.conf;
+              return 301 https://www.afpy.org/planet/;
+          }
+
   handlers:
     - name: reload nginx
       service: name=nginx state=reloaded
