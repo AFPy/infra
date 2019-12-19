@@ -7,6 +7,39 @@
     - name: Basic setup
       include_role: name=common
 
+    - name: Setup PyConFr
+      include_role: name=julienpalard.nginx
+      vars:
+        nginx_owner: pyconfr
+        nginx_domain: pycon.fr
+        nginx_certificates: [pycon.fr, www.pycon.fr]
+        nginx_path: /var/www/pycon.fr/
+        nginx_conf: |
+          server
+          {
+              listen 80;
+              server_name pycon.fr www.pycon.fr;
+              access_log /var/log/nginx/pycon.fr-access.log;
+              error_log /var/log/nginx/pycon.fr-error.log;
+              return 301 https://$host$request_uri;
+          }
+
+          server
+          {
+              listen 443 ssl;
+              server_name pycon.fr www.pycon.fr;
+              access_log /var/log/nginx/pycon.fr-access.log;
+              error_log /var/log/nginx/pycon.fr-error.log;
+              include snippets/letsencrypt-pycon.fr.conf;
+              root /var/www/pycon.fr/;
+              location = / {
+                  return 302 https://www.pycon.fr/2019$request_uri;
+              }
+
+              rewrite ^/2018/$ /2018/fr/index/ last;
+              rewrite ^/2018/(A-Za-z-)+/$ /2018/fr/$1/ last;
+          }
+
     - name: Setup PyConFr 2010
       include_role: name=julienpalard.nginx
       vars:
@@ -15,21 +48,55 @@
         nginx_certificates: [2010.pycon.fr]
         nginx_path: /var/www/2010.pycon.fr/
 
-    - name: Setup PyConFr 2011
-      include_role: name=julienpalard.nginx
-      vars:
-        nginx_owner: pyconfr2011
-        nginx_domain: 2011.pycon.fr
-        nginx_certificates: [2011.pycon.fr]
-        nginx_path: /var/www/2011.pycon.fr/
-
     - name: Setup PyConFr 2012
       include_role: name=julienpalard.nginx
       vars:
-        nginx_owner: pyconfr2012
         nginx_domain: 2012.pycon.fr
         nginx_certificates: [2012.pycon.fr]
-        nginx_path: /var/www/2012.pycon.fr/
+        nginx_conf: |
+          server
+          {
+              listen 80;
+              server_name 2012.pycon.fr;
+              access_log /var/log/nginx/2012.pycon.fr-access.log;
+              error_log /var/log/nginx/2012.pycon.fr-error.log;
+              return 301 https://pycon.fr/2012/;
+          }
+
+          server
+          {
+              listen 443 ssl;
+              server_name 2012.pycon.fr;
+              access_log /var/log/nginx/2012.pycon.fr-access.log;
+              error_log /var/log/nginx/2012.pycon.fr-error.log;
+              include snippets/letsencrypt-2012.pycon.fr.conf;
+              return 301 https://pycon.fr/2012/;
+          }
+
+    - name: Setup PyConFr 2011
+      include_role: name=julienpalard.nginx
+      vars:
+        nginx_domain: 2011.pycon.fr
+        nginx_certificates: [2011.pycon.fr]
+        nginx_conf: |
+          server
+          {
+              listen 80;
+              server_name 2011.pycon.fr;
+              access_log /var/log/nginx/2011.pycon.fr-access.log;
+              error_log /var/log/nginx/2011.pycon.fr-error.log;
+              return 301 https://pycon.fr/2011/;
+          }
+
+          server
+          {
+              listen 443 ssl;
+              server_name 2011.pycon.fr;
+              access_log /var/log/nginx/2011.pycon.fr-access.log;
+              error_log /var/log/nginx/2011.pycon.fr-error.log;
+              include snippets/letsencrypt-2011.pycon.fr.conf;
+              return 301 https://pycon.fr/2011/;
+          }
 
     - name: Setup sigal of paullaroid.pycon.fr
       include_role: name=julienpalard.nginx
@@ -38,3 +105,28 @@
         nginx_domain: paullaroid.pycon.fr
         nginx_certificates: [paullaroid.pycon.fr]
         nginx_path: /var/www/paullaroid.pycon.fr/
+
+    - name: Setup fr.pycon.org
+      include_role: name=julienpalard.nginx
+      vars:
+        nginx_domain: fr.pycon.org
+        nginx_certificates: [fr.pycon.org]
+        nginx_conf: |
+          server
+          {
+              listen 80;
+              server_name fr.pycon.org;
+              access_log /var/log/nginx/fr.pycon.org-access.log;
+              error_log /var/log/nginx/fr.pycon.org-error.log;
+              return 301 https://pycon.fr/;
+          }
+
+          server
+          {
+              listen 443 ssl;
+              server_name fr.pycon.org;
+              access_log /var/log/nginx/fr.pycon.org-access.log;
+              error_log /var/log/nginx/fr.pycon.org-error.log;
+              include snippets/letsencrypt-fr.pycon.org.conf;
+              return 301 https://pycon.fr/;
+          }

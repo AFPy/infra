@@ -32,6 +32,7 @@
               error_log /var/log/nginx/autoconfig.afpy.org-error.log;
               include snippets/letsencrypt-autoconfig.afpy.org.conf;
               root /var/www/autoconfig.afpy.org;
+              autoindex on;
           }
 
     - name: Create directory hierarchy for autoconfig
