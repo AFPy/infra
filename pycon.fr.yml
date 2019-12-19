@@ -40,14 +40,6 @@
               rewrite ^/2018/(A-Za-z-)+/$ /2018/fr/$1/ last;
           }
 
-    - name: Setup PyConFr 2010
-      include_role: name=julienpalard.nginx
-      vars:
-        nginx_owner: pyconfr2010
-        nginx_domain: 2010.pycon.fr
-        nginx_certificates: [2010.pycon.fr]
-        nginx_path: /var/www/2010.pycon.fr/
-
     - name: Setup PyConFr 2012
       include_role: name=julienpalard.nginx
       vars:
@@ -96,6 +88,31 @@
               error_log /var/log/nginx/2011.pycon.fr-error.log;
               include snippets/letsencrypt-2011.pycon.fr.conf;
               return 301 https://pycon.fr/2011/;
+          }
+
+    - name: Setup PyConFr 2010
+      include_role: name=julienpalard.nginx
+      vars:
+        nginx_domain: 2010.pycon.fr
+        nginx_certificates: [2010.pycon.fr]
+        nginx_conf: |
+          server
+          {
+              listen 80;
+              server_name 2010.pycon.fr;
+              access_log /var/log/nginx/2010.pycon.fr-access.log;
+              error_log /var/log/nginx/2010.pycon.fr-error.log;
+              return 301 https://pycon.fr/2010/;
+          }
+
+          server
+          {
+              listen 443 ssl;
+              server_name 2010.pycon.fr;
+              access_log /var/log/nginx/2010.pycon.fr-access.log;
+              error_log /var/log/nginx/2010.pycon.fr-error.log;
+              include snippets/letsencrypt-2010.pycon.fr.conf;
+              return 301 https://pycon.fr/2010/;
           }
 
     - name: Setup sigal of paullaroid.pycon.fr
