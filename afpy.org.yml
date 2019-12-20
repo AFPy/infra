@@ -185,6 +185,15 @@
               return 301 https://www.afpy.org/planet/;
           }
 
+    - name: Setup salt-fr.afpy.org
+      include_role: name=julienpalard.nginx
+      vars:
+        nginx_owner: salt-fr-afpy-org
+        nginx_path: /var/www/salt-fr.afpy.org
+        nginx_domain: salt-fr.afpy.org
+        nginx_certificates: [salt-fr.afpy.org]
+        nginx_public_deploy_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHVrME7+AYhM4n6opE5gVJbWsZHLETucV2wV+kDvnLk3"
+
   handlers:
     - name: reload nginx
       service: name=nginx state=reloaded
