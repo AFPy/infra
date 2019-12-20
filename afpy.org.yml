@@ -194,6 +194,15 @@
         nginx_certificates: [salt-fr.afpy.org]
         nginx_public_deploy_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHVrME7+AYhM4n6opE5gVJbWsZHLETucV2wV+kDvnLk3"
 
+    - name: Setup nantes.afpy.org
+      include_role: name=julienpalard.nginx
+      vars:
+        nginx_owner: nantes-afpy-org
+        nginx_path: /var/www/nantes.afpy.org
+        nginx_domain: nantes.afpy.org
+        nginx_certificates: [nantes.afpy.org]
+        nginx_public_deploy_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGsky9ccA9SkMbFpaL9yEwLUW6y320kmwoCdGVCsWd3L"
+
   handlers:
     - name: reload nginx
       service: name=nginx state=reloaded
