@@ -37,8 +37,12 @@ c'est le rôle de la CI (Github Actions, ...), pas de nos playbooks.
 
 ## TODO
 
+- [ ] https://github.com/afpy/salt-fr
 - [ ] Github Actions sur Alain (déployer au push).
 - [ ] Setup watchghost
+- [ ] C'est quoi pycon.afpy.org ?
+- [ ] C'est quoi video.pycon.fr ? (IN A 91.121.116.118)
+- [ ] videos-2015.pycon.fr.
 
 
 ## deb.afpy.org
