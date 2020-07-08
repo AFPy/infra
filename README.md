@@ -22,6 +22,14 @@ Puis pour jouer les *playbooks* :
 - Pour configurer Passbolt : `ansible-playbook passbolt.yml`
   (attention voir [#15](https://github.com/laxathom/ansible-role-passbolt/issues/15)).
 
+## TODO
+
+### Mailman 3
+
+Mailman 3 est installé sur https://mm3.afpy.org, Julien a un compte
+super user, vous pouvez en demander un aussi. le mailman peut envoyer
+des mails via exim4, mais pour le moment aucune mailing list.
+
 
 ## Faire, ne pas faire
 

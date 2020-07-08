@@ -1,0 +1,120 @@
+---
+
+- block:
+  - name: Install mailman
+    apt:
+      state: present
+      name: [mailman3-full, nginx, python3-psycopg2]
+
+  - name: Create mm3 nginx log directory
+    file:
+      path: /var/log/nginx/mailman3
+      owner: www-data
+      group: adm
+      state: directory
+
+  - name: Create mailman3 postgres user
+    become: true
+    become_user: postgres
+    postgresql_user:
+      user: list
+
+  - name: Create mailman3 postgres db
+    become: true
+    become_user: postgres
+    postgresql_db:
+      name: mailman3
+      owner: list
+
+  - name: Configure mailman to connect via unix socket
+    lineinfile:
+      path: /etc/mailman3/mailman.cfg
+      line: 'url: postgres://list@/mailman3'
+      regex: '^url: postgres://'
+
+  - name: Configure mailman siteowner
+    lineinfile:
+      path: /etc/mailman3/mailman.cfg
+      line: 'site_owner: julien@palard.fr'
+      regex: '^site_owner:'
+
+  - name: Configure mailman language
+    lineinfile:
+      path: /etc/mailman3/mailman.cfg
+      line: 'default_language: fr'
+      regex: '^default_language:'
+
+  - name: Configure mailman to use exim4 LMTP
+    lineinfile:
+      path: /etc/mailman3/mailman.cfg
+      line: 'incoming: mailman.mta.exim4.LMTP'
+      regex: '^incoming: mailman.mta'
+
+  - name: Configure mailman to use exim4
+    lineinfile:
+      path: /etc/mailman3/mailman.cfg
+      line: 'configuration: python:mailman.config.exim4'
+      regex: 'configuration: python:mailman.config.'
+
+  - name: Configure exim4 macros
+    template:
+      src: 25_mm3_macros.j2
+      dest: /etc/exim4/conf.d/main/25_mm3_macros
+
+  - name: Configure exim4 router
+    template:
+      src: 455_mm3_router.j2
+      dest: /etc/exim4/conf.d/router/455_mm3_router
+
+  - name: Configure exim4 transport
+    template:
+      src: 55_mm3_transport.j2
+      dest: /etc/exim4/conf.d/transport/55_mm3_transport
+
+  - name: Configure nginx
+    include_role: name=julienpalard.nginx
+    vars:
+      nginx_domain: mm3.afpy.org
+      nginx_certificates: [mm3.afpy.org]
+      nginx_owner: mm3
+      nginx_conf: |
+        upstream mailman3 {
+            server unix:/run/mailman3-web/uwsgi.sock fail_timeout=0;
+        }
+
+        server {
+            listen 80;
+            server_name mm3.afpy.org;
+            server_tokens off;
+
+            return 301 https://$server_name$request_uri;
+            access_log /var/log/nginx/mailman3/access.log combined;
+            error_log /var/log/nginx/mailman3/error.log;
+        }
+
+        server {
+            listen 443 ssl;
+            server_name mm3.afpy.org;
+            server_tokens off;
+
+            include snippets/letsencrypt-mm3.afpy.org.conf;
+
+            location / {
+                uwsgi_pass mailman3;
+                include /etc/nginx/uwsgi_params;
+            }
+
+            location /mailman3/static {
+                alias /var/lib/mailman3/web/static;
+            }
+
+            location /mailman3/static/favicon.ico {
+                alias /var/lib/mailman3/web/static/postorius/img/favicon.ico;
+            }
+
+            access_log /var/log/nginx/mailman3/access.log combined;
+            error_log /var/log/nginx/mailman3/error.log;
+        }
+
+
+  tags: mailman

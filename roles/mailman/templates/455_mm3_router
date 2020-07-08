@@ -1,0 +1,21 @@
+mailman3_router:
+  driver = accept
+  domains = +mm_domains
+  require_files = MM3_LISTCHK
+  local_part_suffix_optional
+  local_part_suffix = \
+     -bounces   : -bounces+* : \
+     -confirm   : -confirm+* : \
+     -join      : -leave     : \
+     -owner     : -request   : \
+     -subscribe : -unsubscribe
+  transport = mailman3_transport
+
+# /etc/exim4/conf.d/transport/55_mm3_transport
+mailman3_transport:
+  driver = smtp
+  protocol = lmtp
+  allow_localhost
+  hosts = localhost
+  port = MM3_LMTP_PORT
+  rcpt_include_affixes = true

@@ -44,13 +44,23 @@
               server_name www.afpy.org afpy.org;
               access_log /var/log/nginx/afpy.org-access.log;
               error_log /var/log/nginx/afpy.org-error.log;
-              return 301 https://$host$request_uri;
+              return 301 https://www.afpy.org$request_uri;
           }
 
           server
           {
               listen 443 ssl;
-              server_name www.afpy.org afpy.org;
+              server_name afpy.org;
+              access_log /var/log/nginx/afpy.org-access.log;
+              error_log /var/log/nginx/afpy.org-error.log;
+              include snippets/letsencrypt-afpy.org.conf;
+              return 301 https://www.afpy.org$request_uri;
+          }
+
+          server
+          {
+              listen 443 ssl;
+              server_name www.afpy.org;
               access_log /var/log/nginx/afpy.org-access.log;
               error_log /var/log/nginx/afpy.org-error.log;
               root /var/www/afpy.org/;
