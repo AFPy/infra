@@ -2,7 +2,9 @@
 
 - hosts: webservers
   vars:
-    nginx_public_deploy_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINbgxOufHY7SxQrJNTlHmye+xeNHBA1O5SGtGhGeOVZM"
+    nginx_public_deploy_key: |
+         ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINbgxOufHY7SxQrJNTlHmye+xeNHBA1O5SGtGhGeOVZM
+         ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIvF5rwjx5lpjzH6B4Uce9kZhz260kkwzYvIieR189Q1
   tasks:
     - name: Basic setup
       include_role: name=common
