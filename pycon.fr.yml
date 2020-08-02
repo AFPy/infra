@@ -52,7 +52,7 @@
               include snippets/letsencrypt-pycon.fr.conf;
               root /var/www/pycon.fr/;
               location = / {
-                  return 302 https://www.pycon.fr/2019$request_uri;
+                  return 302 https://www.pycon.fr/2020$request_uri;
               }
 
               rewrite ^/2018/$ /2018/fr/index/ last;
