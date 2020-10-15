@@ -80,16 +80,6 @@ Liste des jails toujours utiles :
 - http
   - C'est le nginx qui dispatch aux autres jails.
   - 2019-07-04: `rm sites-enabled/{plone,hg,paullaroid,membres,supervision}.afpy.org`
-- alain
-  - Bot IRC sur #afpy sur freenode.
-
-
-Jails en fin de vie :
-
-- afpyro
-  - https://afpyro.afpy.org/
-  - https://github.com/AFPy/siteafpyro
-  - Il faudrait poser une 301 vers ... afpy.org ?
 
 
 ## storage.afpy.org
