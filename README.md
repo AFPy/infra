@@ -63,23 +63,14 @@ fingerprint: `SHA256:xVC4sYYdmDSbJP6JWZUxApzHdbAj1p3uZlOEIksXrMA`.
 
 Liste des jails toujours utiles :
 
-- web: héberge https://afpy.org (https://github.com/afpy/site/)
-- dns
+- web: stoppée, sauvegardée, à supprimer.
+- dns: Doit être démarrée avant mailman
 - smtp:
   - smtpd (/usr/local/etc/mail/smtpd.conf)
   - dovecot (comptes: /usr/local/etc/mail/tables/passwd)
   - spamd
-- pyconfr
-  - Un static dump de 2013: `/home/pyconfr/static_dump/2013/`.
-  - Un static dump de 2014: `/home/pyconfr/static_dump/2014/`.
-  - Un static dump de 2015: `/home/pyconfr/static_dump/2015/`.
-  - Les Pelican de 2016, 2017, 2018.
-  - Le flask-freeze de 2019.
-- mailman
-  - Le sitepass est disponnible dans passbolt.
-- http
-  - C'est le nginx qui dispatch aux autres jails.
-  - 2019-07-04: `rm sites-enabled/{plone,hg,paullaroid,membres,supervision}.afpy.org`
+- mailman: Le sitepass est disponnible dans passbolt.
+- http: toujours utile pour https://lists.afpy.org
 
 
 ## storage.afpy.org
