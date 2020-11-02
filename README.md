@@ -145,3 +145,12 @@ See [passbolt backup documentation](https://help.passbolt.com/hosting/backup).
 
 On a un CRON qui lance un `mysqldump` vers `/srv/backups/passbolt.sql`
 sur le serveur du passbolt, qui dont pourrait se faire sauvegarder par rsnapshot.
+
+
+## BBB
+
+On a installé le BBB simplement, sur bbb.afpy.org, une machine dédiée :
+
+```
+root@bbb:~# wget -qO- https://ubuntu.bigbluebutton.org/bbb-install.sh | bash -s -- -v xenial-22 -s bbb.afpy.org -e julien@palard.fr -w -g
+```
