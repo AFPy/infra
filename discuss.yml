@@ -1,0 +1,10 @@
+---
+
+- hosts: webservers
+  vars:
+    discourse_domain: discuss.afpy.org
+    discourse_admins:
+      - julien@palard.fr
+      - marc@debureaux.fr
+  roles:
+    - discourse

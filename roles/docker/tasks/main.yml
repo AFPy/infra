@@ -1,0 +1,34 @@
+---
+
+- name: Add docker apt requisites
+  apt:
+    state: present
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+
+- name: Add docker GPG key
+  apt_key:
+    url: "https://download.docker.com/linux/debian/gpg"
+    state: present
+
+- name: Add docker repository
+  copy:
+    content: "deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_facts.distribution_release }} stable"
+    dest: /etc/apt/sources.list.d/docker.list
+  register: sources_list
+
+- name: apt update
+  apt:
+    update_cache: yes
+  when: sources_list is changed
+
+- name: Install docker
+  apt:
+    name: docker-ce
+    update_cache: yes
+
+# Puis à la main: ./launcher rebuild app
+# Attention ça prend un temps fou.

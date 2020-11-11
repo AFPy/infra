@@ -1,0 +1,60 @@
+## this is the all-in-one, standalone Discourse Docker container template
+##
+## From:
+## https://github.com/discourse/discourse_docker/blob/303eb0309c12e2af3da57ee796c5f154c5a9bca7/samples/standalone.yml
+## then edited to fit AFPy's Ansible install.
+##
+## After making changes to this file, you MUST rebuild
+## /var/discourse/launcher rebuild app
+##
+## visit http://www.yamllint.com/ to validate this file as needed
+
+templates:
+  - "templates/postgres.template.yml"
+  - "templates/redis.template.yml"
+  - "templates/web.template.yml"
+  - "templates/web.ratelimited.template.yml"
+  - "templates/web.socketed.template.yml"
+
+params:
+  db_default_text_search_config: "pg_catalog.french"
+  db_shared_buffers: "256MB"
+  db_work_mem: "40MB"
+  version: tests-passed
+
+env:
+  LANG: fr_FR.UTF-8
+  DISCOURSE_DEFAULT_LOCALE: fr
+  UNICORN_WORKERS: 2
+  DISCOURSE_HOSTNAME: '{{ discourse_domain }}'
+  DISCOURSE_DEVELOPER_EMAILS: '{{ discourse_admins|join(",") }}'
+  DISCOURSE_SMTP_ADDRESS: 172.17.0.1
+  DISCOURSE_SMTP_PORT: 25
+  DISCOURSE_SMTP_ENABLE_START_TLS: false
+
+
+## The Docker container is stateless; all data is stored in /shared
+volumes:
+  - volume:
+      host: /var/discourse/shared/standalone
+      guest: /shared
+  - volume:
+      host: /var/discourse/shared/standalone/log/var-log
+      guest: /var/log
+
+## Plugins go here
+## see https://meta.discourse.org/t/19157 for details
+hooks:
+  after_code:
+    - exec:
+        cd: $home/plugins
+        cmd:
+          - git clone https://github.com/discourse/docker_manager.git
+
+## Any custom commands to run after building
+run:
+  - exec: echo "Beginning of custom commands"
+  ## If you want to set the 'From' email address for your first registration, uncomment and change:
+  ## After getting the first signup email, re-comment the line. It only needs to run once.
+  - exec: rails r "SiteSetting.notification_email='discuss@afpy.org'"
+  - exec: echo "End of custom commands"
