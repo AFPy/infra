@@ -20,7 +20,7 @@
                 type filter hook input priority 0;
                 iif lo accept
                 ct state established,related accept
-                tcp dport { ssh, http, https, smtp } ct state new accept
+                tcp dport { ssh, http, https, smtp, imap2, imaps} ct state new accept
                 counter drop
             }
         }
