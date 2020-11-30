@@ -1,0 +1,112 @@
+---
+
+- hosts: webservers
+  tasks:
+    - name: Basic setup
+      include_role: name=common
+
+    - name: Setup pydocteur.afpy.org
+      include_role: name=julienpalard.nginx
+      vars:
+        nginx_owner: pydocteur-afpy-org
+        nginx_domain: pydocteur.afpy.org
+        nginx_certificates: [pydocteur.afpy.org]
+        nginx_public_deploy_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDPqZ20aNdTDrePRQT0obzUF0yn/o3cWEFwaf/MtAOmVxpJZiTZzaikU58qLVaTxfZpULMf2yIB9a1v0FhUOHde30+FFyxuGCMmV9lHT7wA4TS3Ucqj2kqzV2Qby/3IjxI41MXpbIFBj7K7TaJKfCPb2ToAuxbyiSiLXDre+xpSfR8qNAz1nObJPR/NbrJRzHnLywml1b7j1kPbbGfUvh3jtMa9a9eN3xotxGsLM8Da+R86xagC6lChJqxzM2zlsqXMhwnf/ntNAIJC6CpVpwdKTF6S8VIVC2UyB9oMnP43B1ijAETuNYG/nm4nE5IkQ14SiiQyRqdfX7+y5Pt2BfOxwVEedvcdAHZIj3v0fDr+23lf2AXR2v9V2JWT0BVLSJ6s2DHrumXkbS+XQkJWjxSZUUN7zg+J/+sPRrYERo+wIzLxXGGycrRgmQKLH6OJIy2/n/L8KtZfvxm6u90WIHu6RYTU9rqvzoqtEImDegOtzPqDFsljm8simginlqQo5gk= pydocteur"
+        nginx_conf: |
+          server
+          {
+              listen 80;
+              server_name pydocteur.afpy.org;
+              access_log /var/log/nginx/pydocteur.afpy.org-access.log;
+              error_log /var/log/nginx/pydocteur.afpy.org-error.log;
+              return 301 https://$host$request_uri;
+          }
+
+          server
+          {
+              listen 443 ssl;
+              server_name pydocteur.afpy.org;
+              access_log /var/log/nginx/pydocteur.afpy.org-access.log;
+              error_log /var/log/nginx/pydocteur.afpy.org-error.log;
+              include snippets/letsencrypt-pydocteur.afpy.org.conf;
+              location /
+              {
+                  include proxy_params;
+                  proxy_pass http://unix:/home/pydocteur-afpy-org/wsgi.sock;
+              }
+          }
+
+    - name: PyDocTeur have its own systemd user daemon started at boot
+      command:
+        cmd: loginctl enable-linger pydocteur-afpy-org
+        creates: "/var/lib/systemd/linger/pydocteur-afpy-org"
+
+    - name: Initial clone
+      become: true
+      become_user: pydocteur-afpy-org
+      git:
+        repo: https://github.com/AFPy/PyDocTeur/
+        dest: /home/pydocteur-afpy-org/src/
+        update: no
+
+    - name: pip install requirements
+      become: true
+      become_user: pydocteur-afpy-org
+      pip:
+        requirements: /home/pydocteur-afpy-org/src/requirements.txt
+        virtualenv_command: /usr/bin/python3 -m venv
+        virtualenv: "/home/pydocteur-afpy-org/venv/"
+
+    - name: pip install gunicorn
+      become: true
+      become_user: pydocteur-afpy-org
+      pip:
+        name: gunicorn
+        virtualenv_command: /usr/bin/python3 -m venv
+        virtualenv: "/home/pydocteur-afpy-org/venv/"
+
+    - name: systemd user directory
+      file:
+        path: /home/pydocteur-afpy-org/.local/share/systemd/user/
+        state: directory
+
+    - name: systemd pydocteur.afpy.org service
+      copy:
+        dest: /home/pydocteur-afpy-org/.local/share/systemd/user/pydocteur.service
+        content: |
+          [Unit]
+          Description=PyDocTeur Github hook
+          After=network.target
+
+          [Service]
+          PIDFile=/home/pydocteur-afpy-org/service.pid
+          WorkingDirectory=/home/pydocteur-afpy-org/src/
+          ExecStart=/home/pydocteur-afpy-org/venv/bin/gunicorn -w 1 \
+                    --pid /home/pydocteur-afpy-org/service.pid \
+                    --bind unix:/home/pydocteur-afpy-org/wsgi.sock \
+                    wsgi
+
+          ExecReload=/bin/kill -s HUP $MAINPID
+          ExecStop=/bin/kill -s TERM $MAINPID
+          PrivateTmp=true
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Configure PyDocTeur
+      copy:
+        content: "{{ vault_pydocteur_env }}"
+        dest: /home/pydocteur-afpy-org/src/.env
+
+    - name: Start PyDocTeur
+      become: true
+      become_user: pydocteur-afpy-org
+      systemd:
+        daemon_reload: yes
+        scope: user
+        state: started
+        name: pydocteur
+
+  handlers:
+    - name: reload nginx
+      service: name=nginx state=reloaded
