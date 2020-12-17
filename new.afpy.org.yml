@@ -1,0 +1,160 @@
+---
+
+- hosts: webservers
+  vars:
+    nginx_public_deploy_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINbgxOufHY7SxQrJNTlHmye+xeNHBA1O5SGtGhGeOVZM"
+  tasks:
+    - name: Basic setup
+      include_role: name=common
+
+    - name: Configure french locale
+      locale_gen: name="{{ item }}" state=present
+      with_items:
+          - en_US.UTF-8
+          - fr_FR.UTF-8
+
+    - name: Install requirements
+      apt:
+        state: present
+        name: [nginx, sudo]
+
+    - name: Setup new.afpy.org
+      include_role: name=julienpalard.nginx
+      vars:
+        nginx_owner: new-afpy-org
+        nginx_domain: new.afpy.org
+        nginx_certificates: [new.afpy.org]
+        nginx_conf: |
+          server
+          {
+              listen 80;
+              server_name new.afpy.org;
+              access_log /var/log/nginx/new.afpy.org-access.log;
+              error_log /var/log/nginx/new.afpy.org-error.log;
+              return 301 https://new.afpy.org$request_uri;
+          }
+
+          server
+          {
+              listen 443 ssl;
+              server_name new.afpy.org;
+              access_log /var/log/nginx/new.afpy.org-access.log;
+              error_log /var/log/nginx/new.afpy.org-error.log;
+              root /var/www/new.afpy.org/;
+              include snippets/letsencrypt-new.afpy.org.conf;
+              index index.html;
+              location /
+              {
+                  include proxy_params;
+                  proxy_pass http://unix:/run/new-afpy-org/website.sock;
+              }
+
+              location /robots.txt
+              {
+                  alias /home/new-afpy-org/robots.txt;
+              }
+
+              location /static/
+              {
+                  alias /home/new-afpy-org/src/afpy/static/;
+              }
+
+              location ~ ^/doc/python/(.*)$ {return 301 https://docs.python.org/fr/$1;}
+              location = /logo.png { return 301 https://www.new.afpy.org/static/images/logo.svg; }
+              location = /offres-demploi/RSS { return 301 https://www.new.afpy.org/feed/emplois/rss.xml; }
+              location = "/news/aggregator" { return 301 https://www.new.afpy.org/posts/actualites/1345367761; }
+              location = "/news/pyconfr-2012" { return 301 https://www.new.afpy.org/posts/actualites/1345377295; }
+              location = "/news/le-nouveau-site-de-lafpy" { return 301 https://www.new.afpy.org/posts/actualites/1364754937; }
+              location = "/news/un-hackathon-a-paris" { return 301 https://www.new.afpy.org/posts/actualites/1373474773; }
+              location = "/news/julython-contribuez-a-des-projets-opensource" { return 301 https://www.new.afpy.org/posts/actualites/1373475142; }
+              location = "/news/lappel-a-contribution-pour-pyconfr13-est-ouvert" { return 301 https://www.new.afpy.org/posts/actualites/1374511126; }
+              location = "/news/naissance-dune-communaute-saltstack-francophone" { return 301 https://www.new.afpy.org/posts/actualites/1392304489; }
+              location = "/news/pycon-fr-2014" { return 301 https://www.new.afpy.org/posts/actualites/1392311614; }
+              location = "/news/pyconfr15-ou-nous-emmeneras-tu-cette-annee" { return 301 https://www.new.afpy.org/posts/actualites/1423208987; }
+              location = "/news/pycon-fr-2015-we-want-you" { return 301 https://www.new.afpy.org/posts/actualites/1433966273; }
+              location = "/news/pycon-fr-2015-lappel-a-conferencier-est-prolonge" { return 301 https://www.new.afpy.org/posts/actualites/1438067732; }
+              location = "/news/pv-de-lassemblee-generale-ordinaire-2017" { return 301 https://www.new.afpy.org/posts/actualites/1506345679; }
+              location = "/news/code-en-seine" { return 301 https://www.new.afpy.org/posts/actualites/1507801636; }
+              location = "/news/rencontre-python-a-lyon" { return 301 https://www.new.afpy.org/posts/actualites/1508335902; }
+              location = "/news/cours-en-ligne-python-3-des-fondamentaux-aux-concepts-avances-du-langage" { return 301 https://www.new.afpy.org/posts/actualites/1509982321; }
+              location = "/news/atelier-de-contribution-a-ansible-a-paris" { return 301 https://www.new.afpy.org/posts/actualites/1509982513; }
+              location = "/news/rencontre-python-a-lyon-une-carte-pour-les-amener-tous-et-dans-la-connaissance-les-lier" { return 301 https://www.new.afpy.org/posts/actualites/1510650668; }
+              location = "/news/hackaton-la-boite-incubateur-imt-atlantique-rennes" { return 301 https://www.new.afpy.org/posts/actualites/1511358816; }
+              location = "/news/ou-sont-mes-variables" { return 301 https://www.new.afpy.org/posts/actualites/1512378516; }
+              location = "/news/a-vos-framewoks" { return 301 https://www.new.afpy.org/posts/actualites/1512996562; }
+              location = "/news/atelier-contribuez-a-la-traduction-de-la-doc-de-python-en-francais" { return 301 https://www.new.afpy.org/posts/actualites/1515405342; }
+              location = "/news/soiree-python-a-marseille-le-9-2-2018" { return 301 https://www.new.afpy.org/posts/actualites/1518042512; }
+              location = "/news/meetup-python-amiens-1" { return 301 https://www.new.afpy.org/posts/actualites/1523519011; }
+          }
+
+    - name: afpy user can reload own website
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: '^new-afpy-org '
+        line: "new-afpy-org ALL = NOPASSWD: /bin/systemctl restart new-afpy-org.service"
+        validate: /usr/sbin/visudo -cf %s
+
+    - name: Initial clone
+      become: true
+      become_user: new-afpy-org
+      git:
+        repo: https://github.com/Seluj78/site/
+        version: backend_redo
+        dest: /home/new-afpy-org/src/
+        update: no
+
+    - name: pip install AFPy website
+      become: true
+      become_user: new-afpy-org
+      pip:
+        requirements: /home/new-afpy-org/src/requirements.txt
+        virtualenv_command: /usr/bin/python3 -m venv
+        virtualenv: "/home/new-afpy-org/venv/"
+
+    - name: pip install gunicorn
+      become: true
+      become_user: new-afpy-org
+      pip:
+        name: gunicorn
+        virtualenv_command: /usr/bin/python3 -m venv
+        virtualenv: "/home/new-afpy-org/venv/"
+
+    - name: Create image directory
+      file:
+        path: /home/new-afpy-org/src/images/
+        mode: 0755
+        owner: new-afpy-org
+        state: directory
+
+    - name: systemd new.afpy.org service
+      copy:
+        dest: /etc/systemd/system/new-afpy-org.service
+        content: |
+          [Unit]
+          Description=AFPy website
+          After=network.target
+
+          [Service]
+          PIDFile=/run/new-afpy-org/website.pid
+          User=new-afpy-org
+          Group=new-afpy-org
+          RuntimeDirectory=new-afpy-org
+          WorkingDirectory=/home/new-afpy-org/src/
+          Environment="SENTRY_DSN={{ afpy_org_sentry_dsn }}" "FLASK_PORT=false" "FLASK_DEBUG=false" "FLASK_HOST=new.afpy.org" "FLASK_SECRET_KEY={{ vault_new_afpy_org_flask_secret_key }}" "DB_NAME=afpy.db"
+          Environment="VAR1=word1 word2" VAR2=word3 "VAR3=$word 5 6"
+          ExecStart=/home/new-afpy-org/venv/bin/gunicorn -w 4 \
+                    --pid /run/new-afpy-org/website.pid \
+                    --bind unix:/run/new-afpy-org/website.sock run
+          ExecReload=/bin/kill -s HUP $MAINPID
+          ExecStop=/bin/kill -s TERM $MAINPID
+          PrivateTmp=true
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - service: name=new-afpy-org state=started enabled=yes
+
+  handlers:
+    - name: reload nginx
+      service: name=nginx state=reloaded
