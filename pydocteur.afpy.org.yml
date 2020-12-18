@@ -95,8 +95,46 @@
 
     - name: Configure PyDocTeur
       copy:
-        content: "{{ vault_pydocteur_env }}"
+        content: |
+          {{ vault_pydocteur_env }}
+          LOGGING=/home/pydocteur-afpy-org/logging.yml
         dest: /home/pydocteur-afpy-org/src/.env
+
+    - name: Configure PyDocTeur logging
+      notify: restart pydocteur
+      copy:
+        content: |
+          ---
+
+          version: 1
+          disable_existing_loggers: false
+          handlers:
+            stderr:
+              class: logging.StreamHandler
+              stream: ext://sys.stderr
+              level: DEBUG
+            email:
+              class: logging.handlers.SMTPHandler
+              mailhost: 127.0.0.1
+              fromaddr: pydocteur@afpy.org
+              toaddrs: [afpy-web@lists.afpy.org]
+              subject: PyDocTeur Exception
+              level: ERROR
+          loggers:
+            pydocteur:
+              level: DEBUG
+              handlers: [stderr, email]
+            urllib3:
+              level: INFO
+              handlers: [stderr]
+            reqests:
+              level: INFO
+              handlers: [stderr]
+            github:
+              level: INFO
+              handlers: [stderr]
+
+        dest: /home/pydocteur-afpy-org/logging.yml
 
     - name: Start PyDocTeur
       become: true
@@ -108,5 +146,14 @@
         name: pydocteur
 
   handlers:
+    - name: restart pydocteur
+      become: true
+      become_user: pydocteur-afpy-org
+      systemd:
+        daemon_reload: yes
+        scope: user
+        state: restarted
+        name: pydocteur
+
     - name: reload nginx
       service: name=nginx state=reloaded
