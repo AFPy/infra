@@ -5,6 +5,11 @@
     - name: Basic setup
       include_role: name=common
 
+    - name: Install irker
+      apt:
+        name: irker
+        state: present
+
     - name: Setup pydocteur.afpy.org
       include_role: name=julienpalard.nginx
       vars:
@@ -57,11 +62,11 @@
         virtualenv_command: /usr/bin/python3 -m venv
         virtualenv: "/home/pydocteur-afpy-org/venv/"
 
-    - name: pip install gunicorn
+    - name: pip install gunicorn and irker-handler
       become: true
       become_user: pydocteur-afpy-org
       pip:
-        name: gunicorn
+        name: irker-handler
         virtualenv_command: /usr/bin/python3 -m venv
         virtualenv: "/home/pydocteur-afpy-org/venv/"
 
@@ -81,7 +86,8 @@
           [Service]
           PIDFile=/home/pydocteur-afpy-org/service.pid
           WorkingDirectory=/home/pydocteur-afpy-org/src/
-          ExecStart=/home/pydocteur-afpy-org/venv/bin/gunicorn -w 1 \
+          ExecStart=/home/pydocteur-afpy-org/venv/bin/gunicorn \
+                    --workers 1 \
                     --pid /home/pydocteur-afpy-org/service.pid \
                     --bind unix:/home/pydocteur-afpy-org/wsgi.sock \
                     wsgi
@@ -100,9 +106,11 @@
           LOGGING=/home/pydocteur-afpy-org/logging.yml
         dest: /home/pydocteur-afpy-org/src/.env
 
+
     - name: Configure PyDocTeur logging
       notify: restart pydocteur
       copy:
+        dest: /home/pydocteur-afpy-org/logging.yml
         content: |
           ---
 
@@ -120,10 +128,16 @@
               toaddrs: [afpy-web@lists.afpy.org]
               subject: PyDocTeur Exception
               level: ERROR
+            irc:
+              class: irker_handler.IrkerHandler
+              to: irc://chat.freenode.net/python-docs-fr
           loggers:
+            gunicorn.error:
+              level: INFO
+              handlers: [stderr, email]
             pydocteur:
               level: DEBUG
-              handlers: [stderr, email]
+              handlers: [irc, stderr, email]
             urllib3:
               level: INFO
               handlers: [stderr]
@@ -134,7 +148,6 @@
               level: INFO
               handlers: [stderr]
 
-        dest: /home/pydocteur-afpy-org/logging.yml
 
     - name: Start PyDocTeur
       become: true

@@ -102,7 +102,7 @@
         repo: https://github.com/Seluj78/site/
         version: backend_redo
         dest: /home/new-afpy-org/src/
-        update: no
+        update: yes
 
     - name: pip install AFPy website
       become: true
