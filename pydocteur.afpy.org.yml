@@ -131,6 +131,7 @@
             irc:
               class: irker_handler.IrkerHandler
               to: irc://chat.freenode.net/python-docs-fr
+              level: WARNING
           loggers:
             gunicorn.error:
               level: INFO
