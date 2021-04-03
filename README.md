@@ -79,11 +79,11 @@ Accessible via https://dl.afpy.org
 
 On y stocke :
 
-- videospyconfr2016
-- videospyconfr2015
-- http
-- backupdebian
-- ns1
+- videospyconfr2016 (vide)
+- videospyconfr2015 (qui sert `(/usr/jails/videospyconfr2015/)/home/videos/videos-2015` sur http://videos-2015.pycon.fr/)
+- http (qui sert `(/usr/jails/http/)/usr/local/www/nginx/dl/` sur https://dl.afpy.org)
+- backupdebian (semble innutilisée)
+- ns1 (innutilisée)
 
 
 # Ansible
@@ -104,38 +104,18 @@ pas de mlocate, hostname propre, firewall, ce genre de broutilles).
 
 # Backups
 
-Julien Palard a un rsnapshot (en 2019 en tout cas) de storage.afpy.org
-sur son NAS perso, avec :
+Julien Palard a un rsnapshot (vérifié en 2021) sur son NAS perso, avec :
 
 ```
+backup  deb.afpy.org:/srv/      deb.afpy.org/
+backup  deb.afpy.org:/home/     deb.afpy.org/
+backup  deb.afpy.org:/etc/      deb.afpy.org/
+backup  deb.afpy.org:/srv/      deb.afpy.org/
+backup  deb.afpy.org:/home/     deb.afpy.org/
+backup  deb.afpy.org:/etc/      deb.afpy.org/
+backup  deb.afpy.org:/var/discourse/shared/standalone/backups/  deb.afpy.org/
 backup  root@storage.afpy.org:/usr/jails/http/usr/local/www/nginx-dist/dl/      storage.afpy.org/
-
-backup  root@rainette.afpy.org:/etc/    rainette.afpy.org
-
-backup  root@rainette.afpy.org:/usr/jails/web/usr/local/etc/    rainette.afpy.org
-backup  root@rainette.afpy.org:/usr/jails/web/root/     rainette.afpy.org
-
-backup  root@rainette.afpy.org:/usr/jails/dns/usr/local/etc/    rainette.afpy.org
-backup  root@rainette.afpy.org:/usr/jails/supervision/usr/local/etc/    rainette.afpy.org
-backup  root@rainette.afpy.org:/usr/jails/static/usr/local/etc/ rainette.afpy.org
-backup  root@rainette.afpy.org:/usr/jails/ldap/usr/local/etc/   rainette.afpy.org
-backup  root@rainette.afpy.org:/usr/jails/smtp/usr/local/etc/   rainette.afpy.org
-backup  root@rainette.afpy.org:/usr/jails/pyconfr/usr/local/etc/        rainette.afpy.org
-backup  root@rainette.afpy.org:/usr/jails/plone/usr/local/etc/  rainette.afpy.org
-backup  root@rainette.afpy.org:/usr/jails/couchdb/usr/local/etc/        rainette.afpy.org
-backup  root@rainette.afpy.org:/usr/jails/photomaton/usr/local/etc/     rainette.afpy.org
-backup  root@rainette.afpy.org:/usr/jails/membres/usr/local/etc/        rainette.afpy.org
-backup  root@rainette.afpy.org:/usr/jails/mailman/usr/local/etc/        rainette.afpy.org
-backup  root@rainette.afpy.org:/usr/jails/http/usr/local/etc/   rainette.afpy.org
-backup  root@rainette.afpy.org:/usr/jails/alain/usr/local/etc/  rainette.afpy.org
-backup  root@rainette.afpy.org:/usr/jails/afpyro/usr/local/etc/ rainette.afpy.org
-
-backup  root@rainette.afpy.org:/usr/jails/http/usr/local/www/   rainette.afpy.org
-backup  root@rainette.afpy.org:/usr/jails/mailman/usr/local/www/        rainette.afpy.org
-backup  root@rainette.afpy.org:/usr/jails/pyconfr/usr/local/www/        rainette.afpy.org
-backup  root@rainette.afpy.org:/usr/jails/static/usr/local/www/ rainette.afpy.org
-backup  root@rainette.afpy.org:/usr/jails/supervision/usr/local/www/    rainette.afpy.org
-backup  root@rainette.afpy.org:/usr/jails/web/usr/local/www/    rainette.afpy.org
+backup  root@storage.afpy.org:/usr/jails/videospyconfr2015/home/videos/videos-2015/     storage.afpy.org/
 ```
 
 
