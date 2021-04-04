@@ -31,21 +31,10 @@
       mode: 0755
     notify: reload nftables
 
-  - name: Remove /etc/apt/sources.list (May contain cdroms…)
-    file:
-      path: /etc/apt/sources.list
-      state: absent
-
-  - name: Setup apt source list for buster
-    copy:
-      dest: /etc/apt/sources.list.d/debian.list
-      content: |
-        deb https://deb.debian.org/debian buster main non-free contrib
-        deb http://security.debian.org/debian-security buster/updates main contrib non-free
-        deb https://deb.debian.org/debian buster-updates main
-
-  - name: Update via apt
-    apt: update_cache=yes
+  - name: Update via apt (mandatory on first run)
+    apt:
+      update_cache: yes
+      cache_valid_time: 86400
 
   - name: Install some usefull packages
     apt:

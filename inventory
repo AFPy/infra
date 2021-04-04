@@ -1,6 +1,9 @@
 [webservers]
 deb.afpy.org
 
+[dl]
+dl.afpy.org
+
 [rsnapshoters]
 silence.local  # Yes it's on Julien's LAN.
 
