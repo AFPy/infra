@@ -73,17 +73,11 @@ Liste des jails toujours utiles :
 - http: toujours utile pour https://lists.afpy.org
 
 
-## storage.afpy.org
+## dl.afpy.org
 
-Accessible via https://dl.afpy.org
+C'est un directory listing nginx, accessible via https://dl.afpy.org.
 
-On y stocke :
-
-- videospyconfr2016 (vide)
-- videospyconfr2015 (qui sert `(/usr/jails/videospyconfr2015/)/home/videos/videos-2015` sur http://videos-2015.pycon.fr/)
-- http (qui sert `(/usr/jails/http/)/usr/local/www/nginx/dl/` sur https://dl.afpy.org)
-- backupdebian (semble innutilisée)
-- ns1 (innutilisée)
+Il héberge aussi https://videos-2015.pycon.fr/.
 
 
 # Ansible
@@ -114,8 +108,7 @@ backup  deb.afpy.org:/srv/      deb.afpy.org/
 backup  deb.afpy.org:/home/     deb.afpy.org/
 backup  deb.afpy.org:/etc/      deb.afpy.org/
 backup  deb.afpy.org:/var/discourse/shared/standalone/backups/  deb.afpy.org/
-backup  root@storage.afpy.org:/usr/jails/http/usr/local/www/nginx-dist/dl/      storage.afpy.org/
-backup  root@storage.afpy.org:/usr/jails/videospyconfr2015/home/videos/videos-2015/     storage.afpy.org/
+backup  storage.afpy.org:/var/www/ storage.afpy.org/
 ```
 
 
