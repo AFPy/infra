@@ -10,7 +10,7 @@
       - login: hs-157
         authorized_keys: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILQxDNqPx1uYblrbeliQZ5scDPFuMElTRBJmjUFwUMUB hs-157@jirafenn-2021-04-06"
       - login: pilou
-        authorized_keys: []
+        authorized_keys: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC1FuL8/1P24e+kGtn4Ko1Yh0JL/bN0fnat8GSVGggJcxhuTSw6JLLSSkvFe2Kk8h0ymKNXrEwS925dS4p8QDlkj5NM54kSqty3cBAHbcMDsXqTu0qG8UKl5kpf13VKtlSbyVzMMBUyQ4Q9hlbr1CsB58tx5TcpL2q6sh8jvzh3Scux6h1N5RcwrStNnD5A4wJZzk+o7ETm3l5mFmB5ytT+k61eANVyPtnpt4U09R6eBABo/d/gkjNdZyfg7tEzAHESgYl8eV/SLmsKndyPQyp0vkCTdWH4CfTFNJ4FdAQ/InUNrLReySuwxmyIIVNle3gS3ClYcEPUvBVmzIjIufLDfSKnLHGBK0mv+QDiShEHRweQ2DlU4xqb3LH24das+f3hHXMxXi+tPvJ0jHm9y0xaVZvFKrU/NDaAHgUphGhjWGWOyjcYsNMIbfkFOXftMzGQFDY1DSfuz10T/wk0Z+MZXQrX9i2JYe65L+VveeyJIM7B/3bk35fqtP2bZ0hcyiD3MmbNg8U0WYhzXjK0yiPnb6yvajI8tMYMZNXKRokJIrkK6WSHprJKDpYlgFuE9mve2RdLH05X8XYKZVtR6pEyks8sGH4U9k7yAWw+AU7G4754vx/wbcGCucw1JrAzY8g9o1w84wFaH78IX6Nb5Tz5kGNxxTPRwMcLpUf0jA2B4w== pilou@smartcard
       - login: entwanne
         authorized_keys: []
 
