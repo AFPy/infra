@@ -49,7 +49,6 @@ c'est le rôle de la CI (Github Actions, ...), pas de nos playbooks.
 - [ ] Setup watchghost
 - [ ] C'est quoi pycon.afpy.org ?
 - [ ] C'est quoi video.pycon.fr ? (IN A 91.121.116.118)
-- [ ] videos-2015.pycon.fr.
 
 
 ## deb.afpy.org
@@ -77,7 +76,8 @@ Liste des jails toujours utiles :
 
 C'est un directory listing nginx, accessible via https://dl.afpy.org.
 
-Il héberge aussi https://videos-2015.pycon.fr/.
+Il héberge aussi https://videos-2015.pycon.fr/ (qui depuis 2021 redirige
+vers dl.afpy.org/pycon-fr-15, c'est mieux rangé).
 
 
 # Ansible

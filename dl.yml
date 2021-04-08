@@ -69,10 +69,29 @@
           server
           {
               listen 80;
-              server_name dl.afpy.org videos-2015.pycon.fr;
+              server_name dl.afpy.org;
               access_log /var/log/nginx/http-access.log;
               error_log /var/log/nginx/http-error.log;
               return 301 https://$host$request_uri;
+          }
+
+          server
+          {
+              listen 80;
+              server_name videos-2015.pycon.fr;
+              access_log /var/log/nginx/http-access.log;
+              error_log /var/log/nginx/http-error.log;
+              return 301 https://dl.afpy.org/pycon-fr-15$request_uri;
+          }
+
+          server
+          {
+              listen 443 ssl;
+              server_name videos-2015.pycon.fr;
+              access_log /var/log/nginx/videos-2015.pycon.fr-access.log;
+              error_log /var/log/nginx/videos-2015.pycon.fr-error.log;
+              include snippets/letsencrypt-dl.afpy.org.conf;
+              return 301 https://dl.afpy.org/pycon-fr-15$request_uri;
           }
 
           server
@@ -88,21 +107,5 @@
               location /
               {
                   fancyindex on;
-              }
-          }
-
-          server
-          {
-              listen 443 ssl;
-              server_name videos-2015.pycon.fr;
-              access_log /var/log/nginx/videos-2015.pycon.fr-access.log;
-              error_log /var/log/nginx/videos-2015.pycon.fr-error.log;
-              include snippets/letsencrypt-dl.afpy.org.conf;
-
-              root /var/www/videos-2015.pycon.fr/;
-
-              location /
-              {
-                  index index.html;
               }
           }
