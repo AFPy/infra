@@ -58,8 +58,12 @@
         - sudo
 
   - name: Set some authorized keys
-    authorized_key: user=root key="{{item}}"
-    with_items: "{{ authorized_keys }}"
+    copy:
+      content: "{{ authorized_keys }}"
+      dest: /root/.ssh/authorized_keys
+      mode: 0600
+      owner: root
+      group: root
 
   - name: Ensure mlocate and locate are not installed
     apt:
