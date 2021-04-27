@@ -4,7 +4,6 @@ On découpe nos *playbooks* Ansible par rôles :
 
 - `site.yml`: Inclu tous les autres, pratique pour tout exécuter.
 - `pycon.yml`: Pour les pycon.fr
-- `passbolt.yml`: Pour passbolt.
 - `backup.yml`: Configure rsnapshot pour sauvegarder nos serveurs.
 - ...
 
@@ -19,8 +18,6 @@ Puis pour jouer les *playbooks* :
 
 - Pour tout relancer : `ansible-playbook site.yml`
 - Pour configurer les PyCons : `ansible-playbook pycons.yml`
-- Pour configurer Passbolt : `ansible-playbook passbolt.yml`
-  (attention voir [#15](https://github.com/laxathom/ansible-role-passbolt/issues/15)).
 
 ## TODO
 
@@ -68,7 +65,7 @@ Liste des jails toujours utiles :
   - smtpd (/usr/local/etc/mail/smtpd.conf)
   - dovecot (comptes: /usr/local/etc/mail/tables/passwd)
   - spamd
-- mailman: Le sitepass est disponnible dans passbolt.
+- mailman: Le sitepass est disponnible dans [pass](https://github.com/AFPy/pass/).
 - http: toujours utile pour https://lists.afpy.org
 
 
@@ -110,14 +107,6 @@ backup  deb.afpy.org:/etc/      deb.afpy.org/
 backup  deb.afpy.org:/var/discourse/shared/standalone/backups/  deb.afpy.org/
 backup  storage.afpy.org:/var/www/ storage.afpy.org/
 ```
-
-
-## Passbolt
-
-See [passbolt backup documentation](https://help.passbolt.com/hosting/backup).
-
-On a un CRON qui lance un `mysqldump` vers `/srv/backups/passbolt.sql`
-sur le serveur du passbolt, qui dont pourrait se faire sauvegarder par rsnapshot.
 
 
 ## BBB

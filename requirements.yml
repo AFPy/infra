@@ -4,5 +4,3 @@ roles:
     version: master
   - src: tschifftner.exim4_sendonly
     version: master
-  - src: laxathom.passbolt
-    version: master
