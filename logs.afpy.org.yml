@@ -57,15 +57,36 @@
       git:
         repo: https://github.com/AFPy/AfpyLogs/
         dest: /home/logs-afpy-org/src/
-        update: no
+        update: yes
 
     - name: pip install logs.afpy.org website
       become: true
       become_user: logs-afpy-org
       pip:
-        name: /home/logs-afpy-org/src/
+        requirements: /home/logs-afpy-org/src/requirements.txt
         virtualenv_command: /usr/bin/python3 -m venv
         virtualenv: "/home/logs-afpy-org/venv/"
+
+    - name: Configure afpy logs server
+      copy:
+        dest: /home/logs-afpy-org/src/config-production.py
+        content: |
+          SECRET_KEY = "Currently unused
+
+          JINJA_ENV = {
+              "TRIM_BLOCKS": True,
+              "LSTRIP_BLOCKS": True,
+          }
+
+          LOG_PATH = "/var/www/logs.afpy.org/"
+
+          # IRSSI log pattern:
+          DATE_FORMAT = "(\d+-\d+-\d+ )?(?P<time>\d\d:\d\d)"
+          LOG_PATTERN = r"^%s\s+[<*]\s*(?P<nick>[^> ]+)[> ]\s+(?P<message>.*)$" % DATE_FORMAT
+
+          BOLD_PATTERN = r"\*[^*\s]+\*"
+          BOLD_HTML = "<b>{text}</b>"
+      notify: logs-afpy-org.service
 
     - name: systemd logs.afpy.org service
       copy:
@@ -84,7 +105,7 @@
           ExecStart=/home/logs-afpy-org/venv/bin/gunicorn -w 2 \
                     --pid /run/logs-afpy-org/website.pid \
                     --bind unix:/run/logs-afpy-org/website.sock \
-                    --paste deploy.ini
+                    app
           ExecReload=/bin/kill -s HUP $MAINPID
           ExecStop=/bin/kill -s TERM $MAINPID
           PrivateTmp=true
@@ -97,3 +118,9 @@
   handlers:
     - name: reload nginx
       service: name=nginx state=reloaded
+
+    - name: logs-afpy-org.service
+      systemd:
+        name: logs-afpy-org.service
+        state: restarted
+        daemon_reload: yes

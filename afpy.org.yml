@@ -126,7 +126,7 @@
       git:
         repo: https://github.com/AFPy/site/
         dest: /home/afpy-org/src/
-        update: no
+        update: yes
 
     - name: pip install AFPy website
       become: true
