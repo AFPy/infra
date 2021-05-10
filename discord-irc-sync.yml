@@ -1,0 +1,84 @@
+---
+
+- hosts: discord_irc_sync
+  tasks:
+    - name: Create user for discord-irc-sync
+      user:
+        name: discord-irc-sync
+        system: yes
+
+    - name: Clone discord-irc-sync
+      become: true
+      become_user: discord-irc-sync
+      git:
+        repo: https://github.com/Hackndo/discord-irc-sync.git
+        dest: ~/src/
+
+    - name: Install discord-irc-sync requirements
+      become: true
+      become_user: discord-irc-sync
+      pip:
+        requirements: /home/discord-irc-sync/src/requirements.txt
+        virtualenv_command: /usr/bin/python3 -m venv
+        virtualenv: "/home/discord-irc-sync/venv/"
+
+    - name: Configure discord-irc-sync
+      copy:
+        dest: /home/discord-irc-sync/config.json
+        content: |
+          {
+              "irc": {
+                  "server": "irc.freenode.net",
+                  "port": "6697",
+                  "ssl": true,
+                  "channel": "#afpy",
+                  "nickname": "discord",
+                  "owner": "mdk",
+                  "cmd_prefix": "!",
+                  "output_msg": "<:username:> :message:",
+                  "output_cmd": "CMD by :username:",
+                  "log_events": true
+              },
+              "discord": {
+                  "server": 840037163965349918,
+                  "channel": 840037163965349924,
+                  "token": "{{ vault_discord_bot_token }}",
+                  "owner": "mdk",
+                  "cmd_prefix": "!",
+                  "output_msg": "<:username:> :message:",
+                  "output_cmd": "CMD by :username:",
+                  "log_events": true
+              },
+              "formatting": {
+                  "irc_to_discord": false,
+                  "discord_to_irc": true
+              }
+          }
+      notify: restart discord-irc-sync
+
+    - name: Configure discord-irc-sync daemon
+      copy:
+        dest: /etc/systemd/system/discord-irc-sync.service
+        content: |
+          [Unit]
+          Description=discord-irc-sync
+          After=network.target
+
+          [Service]
+          Type=simple
+          ExecStart=/home/discord-irc-sync/venv/bin/python /home/discord-irc-sync/src/discord-irc-sync.py /home/discord-irc-sync/config.json
+          User=discord-irc-sync
+          Group=discord-irc-sync
+          WorkingDirectory=/home/discord-irc-sync/src/
+          Restart=on-failure
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - service: name=discord-irc-sync enabled=yes state=started daemon_reload=yes
+
+  handlers:
+    - name: restart discord-irc-sync
+      service:
+        name: discord-irc-sync
+        state: restarted
