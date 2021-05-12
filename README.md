@@ -111,8 +111,57 @@ backup  storage.afpy.org:/var/www/ storage.afpy.org/
 
 ## BBB
 
-On a installé le BBB simplement, sur bbb.afpy.org, une machine dédiée :
+On utilise une Start-2-M-SATA chez online.net qui propose directement d'installer BBB.
 
-```
-root@bbb:~# wget -qO- https://ubuntu.bigbluebutton.org/bbb-install.sh | bash -s -- -v xenial-22 -s bbb.afpy.org -e julien@palard.fr -w -g
-```
+Attention a retenir son mot de passe user temporaire à l'installation
+même si vous avez une clef SSH: vous en aurez besoin pour `passwd` la
+première fois.
+
+J'y ai appliqué un poil de ssh-hardening :
+
+    AuthenticationMethods publickey
+    LogLevel VERBOSE
+
+Et quand même un peu de confort (enfin c'est surtout que je n'aime pas
+les mots de passe ni sudo) :
+
+    PermitRootLogin prohibit-password
+
+
+Ensuite j'ai [rsync les enregistrements depuis le bbb
+précédent](https://docs.bigbluebutton.org/2.2/customize.html#transfer-published-recordings-from-another-server).
+
+Puis j'ai sauvegardé/restauré la DB de greenlight :
+
+    # Sur l'ancienne machine :
+    docker exec greenlight_db_1 /usr/bin/pg_dumpall -U postgres -f /var/lib/postgresql/data/dump.sql
+
+    # Sur la nouvelle machine :
+    # Copier la sauvegarde sur le nouveau serveur :
+    cd ~root/greenlight
+    rsync bbb.afpy.org:/root/greenlight/db/production/dump.sql ./
+
+    docker-compose down
+    rm -fr db
+    # Configurer le même mot de passe dans .env et docker-compose.yml que l'ancienne machine
+    # En profiter pour vérifier le SAFE_HOSTS dans le .env.
+    docker-compose up -d
+    # Attendre un peu avec un top sous les yeux que ça se termine vraiment
+    docker exec greenlight_db_1 /usr/local/bin/psql -U postgres -c "DROP DATABASE greenlight_production;"
+    mv dump.sql db/production/
+    docker exec greenlight_db_1 /usr/local/bin/psql -U postgres -f /var/lib/postgresql/data/dump.sql
+    rm db/production/dump.sql
+    docker-compose down
+    docker-compose up -d  # Il va s'occuper de la migration
+    docker-compose logs -f # pour voir si tout va bien
+
+`rsync` des certificats TLS aussi :
+
+    rsync -vah bbb.afpy.org:/etc/letsencrypt/ /etc/letsencrypt/
+
+Ça a pris un petit :
+
+    sed s/sd-106563.dedibox.fr/bbb.afpy.org/ /etc/nginx/sites-available/bigbluebutton
+
+Il faut attendre un moment avec un `top` qui tourne, ruby a tout plein
+de truc a faire avant de démarrer.
