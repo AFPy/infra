@@ -130,7 +130,7 @@
               level: ERROR
             irc:
               class: irker_handler.IrkerHandler
-              to: irc://chat.freenode.net/python-docs-fr
+              to: irc://irc.libera.chat/python-docs-fr
               level: WARNING
           loggers:
             gunicorn.error:
