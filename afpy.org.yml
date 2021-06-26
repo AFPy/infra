@@ -66,6 +66,11 @@
               root /var/www/afpy.org/;
               include snippets/letsencrypt-afpy.org.conf;
               index index.html;
+              location /discord
+              {
+                  return 301 https://discord.gg/qaxq8tVcjx;
+              }
+
               location /
               {
                   include proxy_params;
