@@ -13,6 +13,7 @@
       git:
         repo: https://github.com/afpy/alain/
         dest: ~alain/src/
+      notify: restart alain
 
     - name: Alain s'installe dans sa maison
       become: true
@@ -31,6 +32,7 @@
         mode: 0755
 
     - name: Alain découvre les internets
+      notify: restart alain
       copy:
         dest: /etc/systemd/system/alain.service
         content: |
@@ -50,3 +52,10 @@
           WantedBy=multi-user.target
 
     - service: name=alain enabled=yes state=started daemon_reload=yes
+
+  handlers:
+    - name: restart alain
+      systemd:
+        daemon_reload: yes
+        state: restarted
+        name: alain
