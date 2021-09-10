@@ -1,6 +1,7 @@
 ---
 
 letsencrypt_email: afpy-web@lists.afpy.org
+admin_email: afpy-web@lists.afpy.org
 ansible_python_interpreter: "/usr/bin/python3"
 ansible_user: root
 authorized_keys: |

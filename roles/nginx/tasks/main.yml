@@ -1,0 +1,107 @@
+---
+
+- name: Create SSL dhparam
+  get_url:
+    url: https://ssl-config.mozilla.org/ffdhe2048.txt
+    dest: /etc/ssl/certs/dhparam.pem
+    mode: 0644
+
+- name: Prepare certbot+ovh venv
+  pip:
+    chdir: /root/
+    virtualenv_command: /usr/bin/python3 -m venv
+    virtualenv: /root/certbot-venv/
+    name:
+      - "pip>=21.0.1"
+      - "setuptools>=53.0.0"
+      - "wheel>=0.36.2"
+
+- name: Install certbot+ovh in venv
+  pip:
+    chdir: /root/
+    virtualenv_command: /usr/bin/python3 -m venv
+    virtualenv: /root/certbot-venv/
+    name:
+      - certbot
+      - certbot-dns-ovh
+      - certbot-plugin-gandi
+
+- name: Setup OVH credentials
+  copy:
+    content: |
+      dns_ovh_endpoint = ovh-eu
+      dns_ovh_application_key = {{ ovh_application_key }}
+      dns_ovh_application_secret = {{ ovh_application_secret }}
+      dns_ovh_consumer_key = {{ ovh_consumer_key }}
+    dest: /root/ovh.ini
+    mode: 0600
+
+- name: Generate TLS certificates
+  command: /root/certbot-venv/bin/certbot certonly --cert-name {{ nginx_domain | quote }} -n --agree-tos -d {{ nginx_certificates | join(",") | quote }} -m {{ admin_email | quote }} --dns-ovh --dns-ovh-credentials /root/ovh.ini --dns-ovh-propagation-seconds 120
+  register: certbot
+  changed_when: '"no action taken." not in certbot.stdout'
+
+- name: Setup renewal cron
+  cron:
+    name: certbot
+    minute: "18"
+    hour: "8"
+    job: '/root/certbot-venv/bin/certbot -q renew'
+
+- name: Install nginx
+  package:
+    state: present
+    name:
+      - nginx
+      - ca-certificates
+
+- name: Ensure certbot is not installed from Debian packages
+  package:
+    state: absent
+    name:
+      - certbot
+      - python-certbot-nginx
+
+- name: Create letsencrypt snippets
+  template:
+    src: letsencrypt.conf.j2
+    dest: '/etc/nginx/snippets/letsencrypt-{{ nginx_domain }}.conf'
+
+- name: User
+  user:
+    system: true
+    name: "{{ nginx_owner }}"
+  when: nginx_owner is defined
+
+- name: .ssh directory
+  file:
+    path: "~{{ nginx_owner }}/.ssh"
+    state: directory
+    owner: "{{ nginx_owner }}"
+    mode: 0755
+  when: nginx_owner is defined
+
+- name: Deploy key
+  blockinfile:
+    create: true
+    owner: "{{ nginx_owner }}"
+    mode: 0644
+    path: "~{{ nginx_owner }}/.ssh/authorized_keys"
+    marker: "<!-- {mark} ANSIBLE MANAGED BLOCK: Deploy key for {{ nginx_domain }} -->"
+    block: "{{ nginx_public_deploy_key }}"
+  when: nginx_owner is defined and nginx_public_deploy_key is defined
+
+- name: Configure nginx
+  copy:
+    content: "{{ nginx_conf }}"
+    dest: "/etc/nginx/conf.d/{{ nginx_domain }}.conf"
+  notify: reload nginx
+
+- name: WWW directory
+  file:
+    path: "{{ nginx_path }}"
+    state: directory
+    owner: "{{ nginx_owner }}"
+    group: "{{ nginx_owner }}"
+    mode: 0755
+  when: nginx_owner is defined and nginx_path is defined

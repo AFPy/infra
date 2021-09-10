@@ -1,0 +1,21 @@
+# Inspired from
+# https://ssl-config.mozilla.org/#server=nginx&version=1.14.2&config=intermediate&openssl=1.1.1d&guideline=5.6
+ssl_ciphers "{{ ssl_ciphers }}";
+ssl_protocols {{ ssl_protocols }};
+ssl_prefer_server_ciphers {{ ssl_prefer_server_ciphers }};
+
+ssl_session_cache {{ ssl_session_cache }};
+ssl_session_timeout 1d;
+ssl_session_tickets off;
+
+ssl_certificate /etc/letsencrypt/live/{{ nginx_domain }}/fullchain.pem;
+ssl_certificate_key /etc/letsencrypt/live/{{ nginx_domain }}/privkey.pem;
+ssl_dhparam /etc/ssl/certs/dhparam.pem;
+
+ssl_stapling on;
+ssl_stapling_verify on;
+ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
+
+{% if HSTS_header %}
+add_header {{ HSTS_header }};
+{% endif %}
