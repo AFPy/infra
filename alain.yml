@@ -5,7 +5,7 @@
     - name: La naissance d'Alain
       user:
         name: alain
-        system: yes
+        system: true
 
     - name: Le cerveau d'Alain
       become: true
@@ -53,9 +53,25 @@
 
     - service: name=alain enabled=yes state=started daemon_reload=yes
 
+    - name: La serrure de la maison d'Alain
+      file:
+        state: directory
+        path: /home/alain/.ssh/
+        owner: alain
+        group: alain
+        mode: 0755
+
+    - name: La clef de la maison d'Alain
+      copy:
+        content: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMx6KkjC7HAId4/nFnkiHxUb8d7ybJlfLbFu2NFKXpqI github-ci"
+        dest: /home/alain/.ssh/authorized_keys
+        owner: alain
+        group: alain
+        mode: 0644
+
   handlers:
     - name: restart alain
       systemd:
-        daemon_reload: yes
+        daemon_reload: true
         state: restarted
         name: alain

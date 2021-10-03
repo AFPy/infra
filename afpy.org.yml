@@ -10,8 +10,8 @@
     - name: Configure french locale
       locale_gen: name="{{ item }}" state=present
       with_items:
-          - en_US.UTF-8
-          - fr_FR.UTF-8
+        - en_US.UTF-8
+        - fr_FR.UTF-8
 
     - name: Install requirements
       apt:
