@@ -69,6 +69,14 @@
         group: alain
         mode: 0644
 
+    - name: Alain peut se redémarrer tout seul
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: '^alain '
+        line: "alain ALL = NOPASSWD: /bin/systemctl restart alain.service"
+        validate: /usr/sbin/visudo -cf %s
+
   handlers:
     - name: restart alain
       systemd:
