@@ -219,6 +219,32 @@
         nginx_certificates: [nantes.afpy.org]
         nginx_public_deploy_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGsky9ccA9SkMbFpaL9yEwLUW6y320kmwoCdGVCsWd3L"
 
+    - name: Setup lists.afpy.org redirection
+      include_role: name=julienpalard.nginx
+      vars:
+        nginx_domain: lists.afpy.org
+        nginx_certificates: [lists.afpy.org]
+        nginx_conf: |
+          server
+          {
+              listen 80;
+              server_name lists.afpy.org;
+              access_log /var/log/nginx/lists.afpy.org-access.log;
+              error_log /var/log/nginx/lists.afpy.org-error.log;
+              return 301 https://discuss.afpy.org/;
+          }
+
+          server
+          {
+              listen 443 ssl;
+              server_name lists.afpy.org;
+              access_log /var/log/nginx/lists.afpy.org-access.log;
+              error_log /var/log/nginx/lists.afpy.org-error.log;
+              include snippets/letsencrypt-lists.afpy.org.conf;
+              return 301 https://discuss.afpy.org/;
+          }
+
+
   handlers:
     - name: reload nginx
       service: name=nginx state=reloaded
