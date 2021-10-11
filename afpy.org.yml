@@ -79,7 +79,7 @@
 
               location /static/
               {
-                  alias /home/afpy-org/src/static/;
+                  alias /home/new-afpy-org/src/afpy/static/;
               }
 
               location /admin/ {
