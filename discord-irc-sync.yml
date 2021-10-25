@@ -32,7 +32,7 @@
                   "port": "6697",
                   "ssl": true,
                   "channel": "#afpy",
-                  "nickname": "discord",
+                  "nickname": "discord_afpy",
                   "owner": "mdk",
                   "cmd_prefix": "!",
                   "output_msg": "<:username:> :message:",
