@@ -1,6 +1,6 @@
 # Nginx with Letsencrypt
 
-This role sets up nginx with letsencrypt (using DNS-01 with OVH API) .
+This role sets up nginx with letsencrypt (using DNS-01 with Gandi API) .
 
 
 ## Role Variables
@@ -8,9 +8,9 @@ This role sets up nginx with letsencrypt (using DNS-01 with OVH API) .
 The mandatory variables are:
 
 - `admin_email`: For letsencrypt.
-- ovh_application_key, ovh_application_secret, ovh_consumer_key ([see doc](https://certbot-dns-ovh.readthedocs.io/en/stable/#credentials)).
+- `gandi_api_key` ([see doc](https://github.com/obynio/certbot-plugin-gandi/)).
 - `nginx_certificates`: A list of domain to put in this certificate.
-- `nginx_domain`: Used for file names and certificate name.
+- `nginx_name`: Used for file names and certificate name.
 - `nginx_conf`: The nginx config.
 
 Optional variables are:

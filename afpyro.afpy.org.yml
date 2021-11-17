@@ -8,10 +8,10 @@
       include_role: name=common
 
     - name: Setup afpyro.afpy.org
-      include_role: name=julienpalard.nginx
+      include_role: name=nginx
       vars:
         nginx_owner: afpyro-afpy-org
-        nginx_domain: afpyro-afpy.org
+        nginx_name: afpyro.afpy.org
         nginx_certificates: [afpyro.afpy.org]
         nginx_conf: |
           server
@@ -31,14 +31,17 @@
               error_log /var/log/nginx/afpyro.afpy.org-error.log;
               root /var/www/afpyro.afpy.org/;
               include snippets/letsencrypt-afpyro.afpy.org.conf;
+
               location /static/
               {
                   alias /home/afpyro-afpy-org/src/static/;
               }
+
               location /_static/
               {
                   alias /home/afpyro-afpy-org/src/docs/_build/html/_static/;
               }
+
               location /
               {
                   include proxy_params;
@@ -94,4 +97,8 @@
           [Install]
           WantedBy=multi-user.target
 
-    - service: name=afpyro-afpy-org state=started enabled=yes
+    - name: AFPyro is started and running
+      service:
+        name: afpyro-afpy-org
+        state: started
+        enabled: true

@@ -6,7 +6,7 @@
     dest: /etc/ssl/certs/dhparam.pem
     mode: 0644
 
-- name: Prepare certbot+ovh venv
+- name: Prepare certbot+gandi venv
   pip:
     chdir: /root/
     virtualenv_command: /usr/bin/python3 -m venv
@@ -16,35 +16,32 @@
       - "setuptools>=53.0.0"
       - "wheel>=0.36.2"
 
-- name: Install certbot+ovh in venv
+- name: Install certbot+gandi in venv
   pip:
     chdir: /root/
     virtualenv_command: /usr/bin/python3 -m venv
     virtualenv: /root/certbot-venv/
     name:
       - certbot
-      - certbot-dns-ovh
       - certbot-plugin-gandi
 
-- name: Setup OVH credentials
+- name: Setup Gandi credentials
   copy:
     content: |
-      dns_ovh_endpoint = ovh-eu
-      dns_ovh_application_key = {{ ovh_application_key }}
-      dns_ovh_application_secret = {{ ovh_application_secret }}
-      dns_ovh_consumer_key = {{ ovh_consumer_key }}
-    dest: /root/ovh.ini
+      dns_gandi_api_key = {{ gandi_api_key }}
+      dns_gandi_sharing_id = 146a3b9a-1b93-11ec-804f-00163ea99cff
     mode: 0600
+    dest: /root/gandi.ini
 
 - name: Generate TLS certificates
-  command: /root/certbot-venv/bin/certbot certonly --cert-name {{ nginx_domain | quote }} -n --agree-tos -d {{ nginx_certificates | join(",") | quote }} -m {{ admin_email | quote }} --dns-ovh --dns-ovh-credentials /root/ovh.ini --dns-ovh-propagation-seconds 120
+  command: /root/certbot-venv/bin/certbot certonly --cert-name {{ nginx_name | quote }} -n --agree-tos -d {{ nginx_certificates | join(",") | quote }} -m {{ admin_email | quote }} --authenticator dns-gandi --dns-gandi-credentials /root/gandi.ini
   register: certbot
   changed_when: '"no action taken." not in certbot.stdout'
 
 - name: Setup renewal cron
   cron:
     name: certbot
-    minute: "18"
+    minute: "55"
     hour: "8"
     job: '/root/certbot-venv/bin/certbot -q renew'
 
@@ -65,7 +62,7 @@
 - name: Create letsencrypt snippets
   template:
     src: letsencrypt.conf.j2
-    dest: '/etc/nginx/snippets/letsencrypt-{{ nginx_domain }}.conf'
+    dest: '/etc/nginx/snippets/letsencrypt-{{ nginx_name }}.conf'
 
 - name: User
   user:
@@ -87,14 +84,14 @@
     owner: "{{ nginx_owner }}"
     mode: 0644
     path: "~{{ nginx_owner }}/.ssh/authorized_keys"
-    marker: "<!-- {mark} ANSIBLE MANAGED BLOCK: Deploy key for {{ nginx_domain }} -->"
+    marker: "<!-- {mark} ANSIBLE MANAGED BLOCK: Deploy key for {{ nginx_name }} -->"
     block: "{{ nginx_public_deploy_key }}"
   when: nginx_owner is defined and nginx_public_deploy_key is defined
 
 - name: Configure nginx
   copy:
     content: "{{ nginx_conf }}"
-    dest: "/etc/nginx/conf.d/{{ nginx_domain }}.conf"
+    dest: "/etc/nginx/conf.d/{{ nginx_name }}.conf"
   notify: reload nginx
 
 - name: WWW directory

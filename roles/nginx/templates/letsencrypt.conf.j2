@@ -8,8 +8,8 @@ ssl_session_cache {{ ssl_session_cache }};
 ssl_session_timeout 1d;
 ssl_session_tickets off;
 
-ssl_certificate /etc/letsencrypt/live/{{ nginx_domain }}/fullchain.pem;
-ssl_certificate_key /etc/letsencrypt/live/{{ nginx_domain }}/privkey.pem;
+ssl_certificate /etc/letsencrypt/live/{{ nginx_name }}/fullchain.pem;
+ssl_certificate_key /etc/letsencrypt/live/{{ nginx_name }}/privkey.pem;
 ssl_dhparam /etc/ssl/certs/dhparam.pem;
 
 ssl_stapling on;
