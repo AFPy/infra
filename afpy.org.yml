@@ -91,6 +91,12 @@
 
               location ~ ^/doc/python/(.*)$ {return 301 https://docs.python.org/fr/$1;}
               location = /logo.png { return 301 https://www.afpy.org/static/images/logo.svg; }
+              location = /posts/emplois { return 301 https://www.afpy.org/emplois; }
+              location = /post/edit/emplois { return 301 https://www.afpy.org/emplois/new; }
+              location = /discussion { return 301 https://discuss.afpy.org/; }
+              location = /posts/actualites { return 301 https://www.afpy.org/actualites; }
+              location = /membres/adhesion { return 301 https://www.afpy.org/adherer; }
+              location = /jobs { return 301 https://www.afpy.org/emplois; }
               location = /offres-demploi/RSS { return 301 https://www.afpy.org/feed/emplois/rss.xml; }
               location = "/news/aggregator" { return 301 https://www.afpy.org/posts/actualites/1345367761; }
               location = "/news/pyconfr-2012" { return 301 https://www.afpy.org/posts/actualites/1345377295; }
