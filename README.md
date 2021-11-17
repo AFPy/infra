@@ -19,14 +19,6 @@ Puis pour jouer les *playbooks* :
 - Pour tout relancer : `ansible-playbook site.yml`
 - Pour configurer les PyCons : `ansible-playbook pycons.yml`
 
-## TODO
-
-### Mailman 3
-
-Mailman 3 est installé sur https://mm3.afpy.org, Julien a un compte
-super user, vous pouvez en demander un aussi. le mailman peut envoyer
-des mails via exim4, mais pour le moment aucune mailing list.
-
 
 ## Faire, ne pas faire
 
@@ -40,41 +32,38 @@ c'est le rôle de la CI (Github Actions, ...), pas de nos playbooks.
 
 # Servers
 
-## TODO
+La distinction services/serveurs :
 
-- [ ] Github Actions sur Alain (déployer au push).
-- [ ] Setup watchghost
-- [ ] C'est quoi pycon.afpy.org ?
-- [ ] C'est quoi video.pycon.fr ? (IN A 91.121.116.118)
-
-
-## deb.afpy.org
-
-La seule machine déployée via Ansible.
-
-fingerprint: `SHA256:xVC4sYYdmDSbJP6JWZUxApzHdbAj1p3uZlOEIksXrMA`.
+- Un serveur contient un chiffre dans son hostname : deb2.afpy.org,
+  bbb2.afpy.org, …
+- Un service ne contient pas de chiffre dans son hostname :
+  discuss.afpy.org, bbb.afpy.org, www.afpy.org, …
 
 
-## rainette.afpy.org
+## deb2.afpy.org
 
-Liste des jails toujours utiles :
+♥ Machine sponsorisée par Gandi ♥
 
-- web: stoppée, sauvegardée, à supprimer.
-- dns: Doit être démarrée avant mailman
-- smtp:
-  - smtpd (/usr/local/etc/mail/smtpd.conf)
-  - dovecot (comptes: /usr/local/etc/mail/tables/passwd)
-  - spamd
-- mailman: Le sitepass est disponnible dans [pass](https://github.com/AFPy/pass/).
-- http: toujours utile pour https://lists.afpy.org
+C'est un VPS `V-R4 2 CPUs · 4 GB RAM`.
+
+Elle héberge les services suivants :
+
+- https://www.afpy.org ([source](https://github.com/AFPy/site))
+- https://discuss.afpy.org une instance Discourse.
+- [https://*.pycon.fr/*](https://pycon.fr/) (que des sites statiuques)
+- https://afpyro.afpy.org ([source](https://github.com/AFPy/siteafpyro))
+- Alain le bot IRC du canal #afpy ([source](https://github.com/AFPy/alain))
+- La gate [IRC](https://afpy.org/irc)—[Discord](https://afpy.org/discord)
+- https://dl.afpy.org: un *directory listing* nginx des vidéos de nos conférences.
+- https://logs.afpy.org: Les logs du salon IRC #afpy ([source](https://github.com/AFPy/AfpyLogs/))
+- https://pydocteur.afpy.org: Un bot utilisé dans le repo de la traduction ([source](https://github.com/AFPy/PyDocTeur))
 
 
-## dl.afpy.org
+## bbb2.afpy.org
 
-C'est un directory listing nginx, accessible via https://dl.afpy.org.
+♥ Machine sponsorisée par Gandi ♥
 
-Il héberge aussi https://videos-2015.pycon.fr/ (qui depuis 2021 redirige
-vers dl.afpy.org/pycon-fr-15, c'est mieux rangé).
+C'est un VPS `V-R8 4 CPUs · 8 GB RAM`.
 
 
 # Ansible
@@ -111,22 +100,12 @@ backup  storage.afpy.org:/var/www/ storage.afpy.org/
 
 ## BBB
 
-On utilise une Start-2-M-SATA chez online.net qui propose directement d'installer BBB.
-
-Attention a retenir son mot de passe user temporaire à l'installation
-même si vous avez une clef SSH: vous en aurez besoin pour `passwd` la
-première fois.
+Hébergé sur bbb2.afpy.org chez Gandi.
 
 J'y ai appliqué un poil de ssh-hardening :
 
     AuthenticationMethods publickey
     LogLevel VERBOSE
-
-Et quand même un peu de confort (enfin c'est surtout que je n'aime pas
-les mots de passe ni sudo) :
-
-    PermitRootLogin prohibit-password
-
 
 Ensuite j'ai [rsync les enregistrements depuis le bbb
 précédent](https://docs.bigbluebutton.org/2.2/customize.html#transfer-published-recordings-from-another-server).

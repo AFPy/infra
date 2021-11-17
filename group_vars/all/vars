@@ -1,8 +1,8 @@
 ---
 
 gandi_api_key: "{{ vault_gandi_api_key }}"
-letsencrypt_email: afpy-web@lists.afpy.org
-admin_email: afpy-web@lists.afpy.org
+letsencrypt_email: julien@python.org
+admin_email: julien@python.org
 ansible_python_interpreter: "/usr/bin/python3"
 ansible_user: root
 authorized_keys: |
