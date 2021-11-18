@@ -70,7 +70,19 @@ C'est un VPS `V-R8 4 CPUs · 8 GB RAM`.
 
 On utilies ces rôles Ansible :
 
+
+## roles/nginx
+
+Ce rôle configure un nginx avec Letsencrypt en DNS-01 via l'API Gandi (nos domaines étant chez Gandi).
+
+L'avantage du DNS-01 c'est qu'on peut configurer un nouveau serveur **avant** que le DNS ne pointe sur lui.
+
+
 ## julienpalard.nginx
+
+Ce rôle configure un nginx avec Letsencrypt en HTTP-01, on l'utilise
+assez peu maintenant, on l'utilise là où on ne peut pas faire de
+DNS-01 (pour `fr.pycon.org` par exemple).
 
 Voir la [doc](https://github.com/JulienPalard/ansible-role-nginx).
 
