@@ -6,7 +6,7 @@
       include_role: name=common
 
     - name: Setup logs.afpy.org
-      include_role: name=julienpalard.nginx
+      include_role: name=nginx
       vars:
         nginx_owner: logs-afpy-org
         nginx_domain: logs.afpy.org

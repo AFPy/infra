@@ -1,22 +1,18 @@
 [webservers]
-deb.afpy.org
 deb2.afpy.org
 
 [dl]
 deb2.afpy.org
 
 [rsnapshotted]
-deb.afpy.org
+deb2.afpy.org
+bbb2.afpy.org
 
 [alains]
-deb.afpy.org
-
-[afpyros]
-deb.afpy.org
 deb2.afpy.org
 
-[mailmans]
-deb.afpy.org
+[afpyros]
+deb2.afpy.org
 
 [discord_irc_sync]
-deb.afpy.org
+deb2.afpy.org
