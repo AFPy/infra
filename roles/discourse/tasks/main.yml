@@ -41,3 +41,15 @@
   template:
     src: app.yml
     dest: /var/discourse/containers/app.yml
+
+- name: Allow docker to send emails via exim
+  lineinfile:
+    path: /etc/exim4/update-exim4.conf.conf
+    regexp: ^dc_local_interfaces=
+    line: "dc_local_interfaces='127.0.0.1;172.17.0.1'"
+
+- name: Allow docker to send emails via exim
+  lineinfile:
+    path: /etc/exim4/update-exim4.conf.conf
+    regexp: ^dc_relay_nets=
+    line: "dc_relay_nets='172.16.0.0/12'"

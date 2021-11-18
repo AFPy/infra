@@ -7,4 +7,5 @@
       - julien@palard.fr
       - marc@debureaux.fr
   roles:
+    - common
     - discourse

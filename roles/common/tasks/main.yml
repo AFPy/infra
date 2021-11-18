@@ -5,6 +5,63 @@
     hostname:
       name: "{{ inventory_hostname_short }}"
 
+  - name: Configure FQDN
+    lineinfile:
+      path: /etc/hosts
+      regexp: '^127\.0\.0\.1'
+      line: "127.0.0.1 {{ inventory_hostname }} {{ inventory_hostname_short }} localhost"
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: Choose a DKIM selector
+    set_fact:
+      dkim_selector: "{{ inventory_hostname | replace('.', '-') }}"
+
+  - name: Create /etc/exim4/dkim/ directory
+    file:
+      path: /etc/exim4/dkim/
+      state: directory
+      mode: 0750
+      owner: Debian-exim
+      group: Debian-exim
+
+  - name: Generate a private key for DKIM
+    command: openssl genrsa -out /etc/exim4/dkim/{{ dkim_selector }}-private.key 1024
+    args:
+      creates: /etc/exim4/dkim/{{ dkim_selector }}-private.key
+
+  - name: Allow exim to read the DKIM private key
+    file:
+      path: /etc/exim4/dkim/{{ dkim_selector }}-private.key
+      owner: root
+      group: Debian-exim
+      mode: 0640
+
+  - name: Derive the public key for DKIM
+    command: openssl rsa -in {{ dkim_selector }}-private.key -out {{ dkim_selector }}.pem -pubout -outform PEM
+    args:
+      chdir: /etc/exim4/dkim/
+      creates: /etc/exim4/dkim/{{ dkim_selector }}.pem
+
+  - name: Configure exim to use our DKIM key
+    copy:
+      dest: /etc/exim4/conf.d/main/00_local_macros
+      content: |
+        DKIM_CANON = relaxed
+        DKIM_SELECTOR = {{ dkim_selector }}
+        DKIM_DOMAIN = {{ inventory_hostname }}
+        DKIM_PRIVATE_KEY = /etc/exim4/dkim/{{ dkim_selector }}-private.key
+      owner: root
+      group: root
+      mode: 0644
+    notify: reload exim4
+    register: config_exim
+
+  - name: Reconfigure exim4
+    command: update-exim4.conf
+    when: config_exim is changed
+
   - package: name=nftables state=present
 
   - service: name=nftables enabled=yes state=started daemon_reload=yes
