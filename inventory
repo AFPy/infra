@@ -1,8 +1,8 @@
 [webservers]
 deb.afpy.org
+deb2.afpy.org
 
 [dl]
-dl.afpy.org
 deb2.afpy.org
 
 [rsnapshotted]
