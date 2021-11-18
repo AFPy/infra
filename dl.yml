@@ -63,7 +63,7 @@
       include_role: name=nginx
       vars:
         nginx_owner: dl-afpy-org
-        nginx_name: dl.afpy.org
+        nginx_domain: dl.afpy.org
         nginx_certificates: [dl.afpy.org, videos-2015.pycon.fr]
         nginx_conf: |
           server

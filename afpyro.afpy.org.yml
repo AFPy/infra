@@ -11,7 +11,7 @@
       include_role: name=nginx
       vars:
         nginx_owner: afpyro-afpy-org
-        nginx_name: afpyro.afpy.org
+        nginx_domain: afpyro.afpy.org
         nginx_certificates: [afpyro.afpy.org]
         nginx_conf: |
           server

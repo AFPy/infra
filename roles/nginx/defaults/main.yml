@@ -4,3 +4,26 @@ ssl_protocols: "TLSv1.2 TLSv1.3"
 ssl_prefer_server_ciphers: "off"
 ssl_session_cache: "shared:ssl_session_cache:10m"
 HSTS_header: 'Strict-Transport-Security "max-age=63072000; always"'
+nginx_conf: |
+  server
+  {
+      listen 80;
+      server_name {{ nginx_domain }};
+      access_log /var/log/nginx/{{ nginx_domain }}-access.log;
+      error_log /var/log/nginx/{{ nginx_domain }}-error.log;
+
+      return 301 https://$host$request_uri;
+  }
+
+  server
+  {
+      listen 443 ssl;
+      charset utf-8;
+      server_name {{ nginx_domain }};
+      access_log /var/log/nginx/{{ nginx_domain }}-access.log;
+      error_log /var/log/nginx/{{ nginx_domain }}-error.log;
+      include snippets/letsencrypt-{{ nginx_domain }}.conf;
+
+      root {{ nginx_path }};
+      index index.html;
+  }

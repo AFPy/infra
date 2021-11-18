@@ -34,7 +34,7 @@
     dest: /root/gandi.ini
 
 - name: Generate TLS certificates
-  command: /root/certbot-venv/bin/certbot certonly --cert-name {{ nginx_name | quote }} -n --agree-tos -d {{ nginx_certificates | join(",") | quote }} -m {{ admin_email | quote }} --authenticator dns-gandi --dns-gandi-credentials /root/gandi.ini
+  command: /root/certbot-venv/bin/certbot certonly --cert-name {{ nginx_domain | quote }} -n --agree-tos -d {{ nginx_certificates | join(",") | quote }} -m {{ admin_email | quote }} --authenticator dns-gandi --dns-gandi-credentials /root/gandi.ini
   register: certbot
   changed_when: '"no action taken." not in certbot.stdout'
 
@@ -63,7 +63,7 @@
 - name: Create letsencrypt snippets
   template:
     src: letsencrypt.conf.j2
-    dest: '/etc/nginx/snippets/letsencrypt-{{ nginx_name }}.conf'
+    dest: '/etc/nginx/snippets/letsencrypt-{{ nginx_domain }}.conf'
 
 - name: User
   user:
@@ -85,14 +85,14 @@
     owner: "{{ nginx_owner }}"
     mode: 0644
     path: "~{{ nginx_owner }}/.ssh/authorized_keys"
-    marker: "<!-- {mark} ANSIBLE MANAGED BLOCK: Deploy key for {{ nginx_name }} -->"
+    marker: "<!-- {mark} ANSIBLE MANAGED BLOCK: Deploy key for {{ nginx_domain }} -->"
     block: "{{ nginx_public_deploy_key }}"
   when: nginx_owner is defined and nginx_public_deploy_key is defined
 
 - name: Configure nginx
   copy:
     content: "{{ nginx_conf }}"
-    dest: "/etc/nginx/conf.d/{{ nginx_name }}.conf"
+    dest: "/etc/nginx/conf.d/{{ nginx_domain }}.conf"
   notify: reload nginx
 
 - name: WWW directory

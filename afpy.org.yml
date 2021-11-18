@@ -32,7 +32,7 @@
       notify: reload nginx
 
     - name: Setup afpy.org
-      include_role: name=julienpalard.nginx
+      include_role: name=nginx
       vars:
         nginx_owner: afpy-org
         nginx_domain: afpy.org
@@ -143,7 +143,7 @@
       become: true
       become_user: afpy-org
       pip:
-        name: /home/afpy-org/src/
+        requirements: /home/afpy-org/src/requirements.txt
         virtualenv_command: /usr/bin/python3 -m venv
         virtualenv: "/home/afpy-org/venv/"
 
@@ -183,7 +183,7 @@
     - service: name=afpy-org state=started enabled=yes
 
     - name: Redirect planet.afpy.org
-      include_role: name=julienpalard.nginx
+      include_role: name=nginx
       vars:
         nginx_domain: planet.afpy.org
         nginx_certificates: [planet.afpy.org]
@@ -208,7 +208,7 @@
           }
 
     - name: Setup salt-fr.afpy.org
-      include_role: name=julienpalard.nginx
+      include_role: name=nginx
       vars:
         nginx_owner: salt-fr-afpy-org
         nginx_path: /var/www/salt-fr.afpy.org
@@ -217,7 +217,7 @@
         nginx_public_deploy_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHVrME7+AYhM4n6opE5gVJbWsZHLETucV2wV+kDvnLk3"
 
     - name: Setup nantes.afpy.org
-      include_role: name=julienpalard.nginx
+      include_role: name=nginx
       vars:
         nginx_owner: nantes-afpy-org
         nginx_path: /var/www/nantes.afpy.org
@@ -226,7 +226,7 @@
         nginx_public_deploy_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGsky9ccA9SkMbFpaL9yEwLUW6y320kmwoCdGVCsWd3L"
 
     - name: Setup lists.afpy.org redirection
-      include_role: name=julienpalard.nginx
+      include_role: name=nginx
       vars:
         nginx_domain: lists.afpy.org
         nginx_certificates: [lists.afpy.org]

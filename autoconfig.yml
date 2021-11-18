@@ -11,7 +11,7 @@
       include_role: name=nginx
       vars:
         nginx_owner: www-data
-        nginx_name: autoconfig.afpy.org
+        nginx_domain: autoconfig.afpy.org
         nginx_certificates: [autoconfig.afpy.org, autoconfig.pycon.fr]
         nginx_path: /var/www/autoconfig.afpy.org
         nginx_conf: |

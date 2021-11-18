@@ -10,7 +10,7 @@ The mandatory variables are:
 - `admin_email`: For letsencrypt.
 - `gandi_api_key` ([see doc](https://github.com/obynio/certbot-plugin-gandi/)).
 - `nginx_certificates`: A list of domain to put in this certificate.
-- `nginx_name`: Used for file names and certificate name.
+- `nginx_domain`: Used for file names, certificate name, and default server_name if no nginx_conf is given.
 - `nginx_conf`: The nginx config.
 
 Optional variables are:

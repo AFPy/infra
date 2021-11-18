@@ -17,7 +17,7 @@
       include_role: name=nginx
       vars:
         nginx_owner: pyconfr
-        nginx_name: pycon.fr
+        nginx_domain: pycon.fr
         nginx_certificates: ['pycon.fr', 'www.pycon.fr']
         nginx_path: /var/www/pycon.fr/
         nginx_conf: |
@@ -59,7 +59,7 @@
     - name: Setup PyConFr 2016
       include_role: name=nginx
       vars:
-        nginx_name: 2016.pycon.fr
+        nginx_domain: 2016.pycon.fr
         nginx_certificates: [2016.pycon.fr]
         nginx_conf: |
           server
@@ -85,7 +85,7 @@
     - name: Setup PyConFr 2012
       include_role: name=nginx
       vars:
-        nginx_name: 2012.pycon.fr
+        nginx_domain: 2012.pycon.fr
         nginx_certificates: [2012.pycon.fr]
         nginx_conf: |
           server
@@ -110,7 +110,7 @@
     - name: Setup PyConFr 2011
       include_role: name=nginx
       vars:
-        nginx_name: 2011.pycon.fr
+        nginx_domain: 2011.pycon.fr
         nginx_certificates: [2011.pycon.fr]
         nginx_conf: |
           server
@@ -135,7 +135,7 @@
     - name: Setup PyConFr 2010
       include_role: name=nginx
       vars:
-        nginx_name: 2010.pycon.fr
+        nginx_domain: 2010.pycon.fr
         nginx_certificates: [2010.pycon.fr]
         nginx_conf: |
           server
@@ -161,7 +161,7 @@
       include_role: name=nginx
       vars:
         nginx_owner: paullaroid
-        nginx_name: paullaroid.pycon.fr
+        nginx_domain: paullaroid.pycon.fr
         nginx_certificates: [paullaroid.pycon.fr]
         nginx_path: /var/www/paullaroid.pycon.fr/
         nginx_conf: |
