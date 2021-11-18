@@ -73,6 +73,14 @@
         virtualenv_command: /usr/bin/python3 -m venv
         virtualenv: "/home/afpyro-afpy-org/venv/"
 
+    - name: Compile HTML pages
+      become: true
+      become_user: afpyro-afpy-org
+      command: make html SPHINXBUILD=/home/afpyro-afpy-org/venv/bin/sphinx-build
+      args:
+        chdir: /home/afpyro-afpy-org/src/docs/
+        creates: /home/afpyro-afpy-org/src/docs/build/html/
+
     - name: systemd afpy.org service
       copy:
         dest: /etc/systemd/system/afpyro-afpy-org.service
