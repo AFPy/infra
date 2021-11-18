@@ -6,7 +6,7 @@
     dest: /var/discourse
 
 - name: Setup nginx
-  include_role: name=julienpalard.nginx
+  include_role: name=nginx
   vars:
     nginx_domain: "{{ discourse_domain }}"
     nginx_certificates: ["{{ discourse_domain }}"]

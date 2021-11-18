@@ -11,7 +11,7 @@
         state: present
 
     - name: Setup pydocteur.afpy.org
-      include_role: name=julienpalard.nginx
+      include_role: name=nginx
       vars:
         nginx_owner: pydocteur-afpy-org
         nginx_domain: pydocteur.afpy.org
