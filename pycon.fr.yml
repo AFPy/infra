@@ -1,10 +1,11 @@
 ---
 
+# After running this playbook on a new machine, you'll need either to:
+# - Rsync /var/www/pycon/fr/ from another server or a backup.
+# - Redeploy every sites (to run pelican / frozen-flask / ...).
+
 - hosts: webservers
   vars:
-    ovh_application_key: "{{ vault_ovh_application_key }}"
-    ovh_application_secret: "{{ vault_ovh_application_secret }}"
-    ovh_consumer_key: "{{ vault_ovh_consumer_key }}"
     nginx_public_deploy_key: |
          ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINbgxOufHY7SxQrJNTlHmye+xeNHBA1O5SGtGhGeOVZM
          ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIvF5rwjx5lpjzH6B4Uce9kZhz260kkwzYvIieR189Q1
@@ -16,7 +17,7 @@
       include_role: name=nginx
       vars:
         nginx_owner: pyconfr
-        nginx_domain: pycon.fr
+        nginx_name: pycon.fr
         nginx_certificates: ['pycon.fr', 'www.pycon.fr']
         nginx_path: /var/www/pycon.fr/
         nginx_conf: |
@@ -58,7 +59,7 @@
     - name: Setup PyConFr 2016
       include_role: name=nginx
       vars:
-        nginx_domain: 2016.pycon.fr
+        nginx_name: 2016.pycon.fr
         nginx_certificates: [2016.pycon.fr]
         nginx_conf: |
           server
@@ -84,7 +85,7 @@
     - name: Setup PyConFr 2012
       include_role: name=nginx
       vars:
-        nginx_domain: 2012.pycon.fr
+        nginx_name: 2012.pycon.fr
         nginx_certificates: [2012.pycon.fr]
         nginx_conf: |
           server
@@ -109,7 +110,7 @@
     - name: Setup PyConFr 2011
       include_role: name=nginx
       vars:
-        nginx_domain: 2011.pycon.fr
+        nginx_name: 2011.pycon.fr
         nginx_certificates: [2011.pycon.fr]
         nginx_conf: |
           server
@@ -134,7 +135,7 @@
     - name: Setup PyConFr 2010
       include_role: name=nginx
       vars:
-        nginx_domain: 2010.pycon.fr
+        nginx_name: 2010.pycon.fr
         nginx_certificates: [2010.pycon.fr]
         nginx_conf: |
           server
@@ -160,7 +161,7 @@
       include_role: name=nginx
       vars:
         nginx_owner: paullaroid
-        nginx_domain: paullaroid.pycon.fr
+        nginx_name: paullaroid.pycon.fr
         nginx_certificates: [paullaroid.pycon.fr]
         nginx_path: /var/www/paullaroid.pycon.fr/
         nginx_conf: |

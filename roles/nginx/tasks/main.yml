@@ -58,6 +58,7 @@
     name:
       - certbot
       - python-certbot-nginx
+      - python3-certbot-nginx
 
 - name: Create letsencrypt snippets
   template:
