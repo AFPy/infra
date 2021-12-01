@@ -1,6 +1,9 @@
 [webservers]
 deb2.afpy.org
 
+[turn]
+turn1.afpy.org
+
 [dl]
 deb2.afpy.org
 

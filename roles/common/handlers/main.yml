@@ -5,3 +5,6 @@
 
 - name: reload exim4
   service: name=exim4 state=reloaded
+
+- name: restart sshd
+  service: name=sshd state=restarted

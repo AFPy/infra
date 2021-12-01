@@ -1,0 +1,104 @@
+---
+
+- hosts: turn
+  vars:
+    turnserver_secret: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          61643630616332343933343663623032346565636431613332373031663834616662343763353863
+          3165323337616264353335613036396663356666666333310a333530383736376134646332633638
+          37633763623039326364356661616436663136623838343734316633373936353465636538353366
+          6236356562343335370a356530353563353865383635643239666438323365346137626634356533
+          31633538363865323066323166323564633439326538386230323132663032653731303165623132
+          3064313963616432383936626437313566653637313130666430
+
+  tasks:
+    - name: Basic setup
+      include_role: name=common
+      vars:
+        nft_extra: |
+          tcp dport {3478, 5349} counter accept comment "coturn listening port"
+          udp dport {3478, 5349} counter accept comment "coturn listening port"
+          udp dport 32769-65535 counter accept comment "relay ports range"
+
+    - name: Install coturn and certbot
+      apt:
+        name: [coturn, certbot]
+        state: present
+
+    - name: Get TLS certificate
+      command: certbot certonly --standalone --preferred-challenges http -d turn.afpy.org -n --agree-tos -m {{ letsencrypt_email | quote }}
+      register: certbot
+      changed_when: '"no action taken." not in certbot.stdout'
+
+    - name: Ensure coturn can read certs
+      file:
+        path: /etc/letsencrypt/renewal-hooks/deploy
+        state: directory
+        mode: 0755
+
+    - name: Configure certbot renewal hook for coturn
+      copy:
+        dest: /etc/letsencrypt/renewal-hooks/deploy/coturn
+        mode: 0755
+        content: |
+          #!/bin/bash -e
+          for certfile in fullchain.pem privkey.pem ; do
+              cp -L /etc/letsencrypt/live/turn.afpy.org/"${certfile}" /etc/turnserver/"${certfile}".new
+              chown turnserver:turnserver /etc/turnserver/"${certfile}".new
+              mv /etc/turnserver/"${certfile}".new /etc/turnserver/"${certfile}"
+          done
+          systemctl kill -sUSR2 coturn.service
+
+    - name: Configure turnserver
+      blockinfile:
+        path: /etc/turnserver.conf
+        block: |
+          fingerprint
+          use-auth-secret
+          static-auth-secret={{turnserver_secret}}
+          realm=afpy.org
+          cert=/etc/turnserver/fullchain.pem
+          pkey=/etc/turnserver/privkey.pem
+          # From https://ssl-config.mozilla.org/ Intermediate, openssl 1.1.0g, 2020-01
+          cipher-list="ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384"
+          dh-file=/etc/turnserver/dhp.pem
+          no-cli
+          no-tlsv1
+          no-tlsv1_1
+          no-loopback-peers
+          no-multicast-peers
+      notify: restart coturn
+
+    - name: Create dph.pem file directory
+      file:
+        path: /etc/turnserver
+        state: directory
+        mode: 0755
+
+    - name: Create dph.pem file
+      command: openssl dhparam -dsaparam  -out /etc/turnserver/dhp.pem 2048
+      args:
+        creates: etc/turnserver/dhp.pem
+
+    - name: Create coturn service directory
+      file:
+        path: /etc/systemd/system/coturn.service.d
+        state: directory
+        mode: 0755
+
+    - name: Configure coturn service override
+      copy:
+        dest: /etc/systemd/system/coturn.service.d/override.conf
+        content: |
+          [Service]
+          LimitNOFILE=1048576
+          AmbientCapabilities=CAP_NET_BIND_SERVICE
+          Restart=always
+      notify: restart coturn
+
+  handlers:
+    - name: restart coturn
+      systemd:
+        name: coturn
+        state: restarted
+        daemon_reload: true

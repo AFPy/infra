@@ -1,0 +1,4 @@
+---
+
+nft_extra: |
+  udp dport 16384-32768 counter accept comment "FreeSWITCH/HTML5 RTP streams"
