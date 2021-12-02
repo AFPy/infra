@@ -68,7 +68,7 @@
       content: |
         #!/usr/sbin/nft -f
 
-        flush ruleset
+        flush table filter
 
         table inet filter {
             chain input {
