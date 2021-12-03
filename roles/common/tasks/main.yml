@@ -64,7 +64,8 @@
 
   - package: name=nftables state=present
 
-  - copy:
+  - name: Copy nftables rules
+    copy:
       content: |
         #!/usr/sbin/nft -f
 
@@ -76,6 +77,11 @@
                 type filter hook input priority 0;
                 iif lo accept
                 ct state established,related accept
+                icmp type echo-request counter accept
+                icmpv6 type echo-request counter accept
+
+                # accept neighbour discovery otherwise connectivity breaks:
+                icmpv6 type { nd-neighbor-solicit, nd-router-advert, nd-neighbor-advert } accept
                 tcp dport { ssh, http, https, smtp, imap2, imaps} ct state new accept
                 {{ nft_extra }}
                 counter drop
