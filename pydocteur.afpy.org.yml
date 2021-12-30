@@ -20,7 +20,7 @@
         nginx_conf: |
           server
           {
-              listen 80;
+              listen [::]:80; listen 80;
               server_name pydocteur.afpy.org;
               access_log /var/log/nginx/pydocteur.afpy.org-access.log;
               error_log /var/log/nginx/pydocteur.afpy.org-error.log;
@@ -29,7 +29,7 @@
 
           server
           {
-              listen 443 ssl;
+              listen [::]:443 ssl; listen 443 ssl;
               server_name pydocteur.afpy.org;
               access_log /var/log/nginx/pydocteur.afpy.org-access.log;
               error_log /var/log/nginx/pydocteur.afpy.org-error.log;

@@ -1,9 +1,0 @@
----
-
-- import_playbook: common.yml
-- import_playbook: pycon.fr.yml
-- import_playbook: afpy.org.yml
-- import_playbook: logs.afpy.org.yml
-- import_playbook: backup.yml
-- import_playbook: autoconfig.yml
-- import_playbook: alain.yml

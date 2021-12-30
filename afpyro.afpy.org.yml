@@ -16,7 +16,7 @@
         nginx_conf: |
           server
           {
-              listen 80;
+              listen [::]:80; listen 80;
               server_name afpyro.afpy.org;
               access_log /var/log/nginx/afpyro.afpy.org-access.log;
               error_log /var/log/nginx/afpyro.afpy.org-error.log;
@@ -25,7 +25,7 @@
 
           server
           {
-              listen 443 ssl;
+              listen [::]:443 ssl; listen 443 ssl;
               server_name afpyro.afpy.org;
               access_log /var/log/nginx/afpyro.afpy.org-access.log;
               error_log /var/log/nginx/afpyro.afpy.org-error.log;

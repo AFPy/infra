@@ -23,7 +23,7 @@
         nginx_conf: |
           server
           {
-              listen 80;
+              listen [::]:80; listen 80;
               server_name .pycon.fr;
               access_log /var/log/nginx/pycon.fr-access.log;
               error_log /var/log/nginx/pycon.fr-error.log;
@@ -32,7 +32,7 @@
 
           server
           {
-              listen 443 ssl;
+              listen [::]:443 ssl; listen 443 ssl;
               server_name pycon.fr;
               access_log /var/log/nginx/pycon.fr-access.log;
               error_log /var/log/nginx/pycon.fr-error.log;
@@ -42,7 +42,7 @@
 
           server
           {
-              listen 443 ssl;
+              listen [::]:443 ssl; listen 443 ssl;
               server_name www.pycon.fr;
               access_log /var/log/nginx/pycon.fr-access.log;
               error_log /var/log/nginx/pycon.fr-error.log;
@@ -64,7 +64,7 @@
         nginx_conf: |
           server
           {
-              listen 80;
+              listen [::]:80; listen 80;
               server_name 2016.pycon.fr;
               access_log /var/log/nginx/2016.pycon.fr-access.log;
               error_log /var/log/nginx/2016.pycon.fr-error.log;
@@ -73,7 +73,7 @@
 
           server
           {
-              listen 443 ssl;
+              listen [::]:443 ssl; listen 443 ssl;
               server_name 2016.pycon.fr;
               access_log /var/log/nginx/2016.pycon.fr-access.log;
               error_log /var/log/nginx/2016.pycon.fr-error.log;
@@ -90,7 +90,7 @@
         nginx_conf: |
           server
           {
-              listen 80;
+              listen [::]:80; listen 80;
               server_name 2012.pycon.fr;
               access_log /var/log/nginx/2012.pycon.fr-access.log;
               error_log /var/log/nginx/2012.pycon.fr-error.log;
@@ -99,7 +99,7 @@
 
           server
           {
-              listen 443 ssl;
+              listen [::]:443 ssl; listen 443 ssl;
               server_name 2012.pycon.fr;
               access_log /var/log/nginx/2012.pycon.fr-access.log;
               error_log /var/log/nginx/2012.pycon.fr-error.log;
@@ -115,7 +115,7 @@
         nginx_conf: |
           server
           {
-              listen 80;
+              listen [::]:80; listen 80;
               server_name 2011.pycon.fr;
               access_log /var/log/nginx/2011.pycon.fr-access.log;
               error_log /var/log/nginx/2011.pycon.fr-error.log;
@@ -124,7 +124,7 @@
 
           server
           {
-              listen 443 ssl;
+              listen [::]:443 ssl; listen 443 ssl;
               server_name 2011.pycon.fr;
               access_log /var/log/nginx/2011.pycon.fr-access.log;
               error_log /var/log/nginx/2011.pycon.fr-error.log;
@@ -140,7 +140,7 @@
         nginx_conf: |
           server
           {
-              listen 80;
+              listen [::]:80; listen 80;
               server_name 2010.pycon.fr;
               access_log /var/log/nginx/2010.pycon.fr-access.log;
               error_log /var/log/nginx/2010.pycon.fr-error.log;
@@ -149,7 +149,7 @@
 
           server
           {
-              listen 443 ssl;
+              listen [::]:443 ssl; listen 443 ssl;
               server_name 2010.pycon.fr;
               access_log /var/log/nginx/2010.pycon.fr-access.log;
               error_log /var/log/nginx/2010.pycon.fr-error.log;
@@ -167,7 +167,7 @@
         nginx_conf: |
           server
           {
-              listen 80;
+              listen [::]:80; listen 80;
               server_name paullaroid.pycon.fr;
               access_log /var/log/nginx/paullaroid.pycon.fr-access.log;
               error_log /var/log/nginx/paullaroid.pycon.fr-error.log;
@@ -177,7 +177,7 @@
 
           server
           {
-              listen 443 ssl;
+              listen [::]:443 ssl; listen 443 ssl;
               charset utf-8;
               server_name paullaroid.pycon.fr;
               access_log /var/log/nginx/paullaroid.pycon.fr-access.log;
@@ -196,7 +196,7 @@
         nginx_conf: |
           server
           {
-              listen 80;
+              listen [::]:80; listen 80;
               server_name fr.pycon.org;
               access_log /var/log/nginx/fr.pycon.org-access.log;
               error_log /var/log/nginx/fr.pycon.org-error.log;
@@ -205,7 +205,7 @@
 
           server
           {
-              listen 443 ssl;
+              listen [::]:443 ssl; listen 443 ssl;
               server_name fr.pycon.org;
               access_log /var/log/nginx/fr.pycon.org-access.log;
               error_log /var/log/nginx/fr.pycon.org-error.log;

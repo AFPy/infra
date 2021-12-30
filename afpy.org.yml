@@ -40,7 +40,7 @@
         nginx_conf: |
           server
           {
-              listen 80;
+              listen [::]:80; listen 80;
               server_name www.afpy.org afpy.org;
               access_log /var/log/nginx/afpy.org-access.log;
               error_log /var/log/nginx/afpy.org-error.log;
@@ -49,7 +49,7 @@
 
           server
           {
-              listen 443 ssl;
+              listen [::]:443 ssl; listen 443 ssl;
               server_name afpy.org;
               access_log /var/log/nginx/afpy.org-access.log;
               error_log /var/log/nginx/afpy.org-error.log;
@@ -59,7 +59,7 @@
 
           server
           {
-              listen 443 ssl;
+              listen [::]:443 ssl; listen 443 ssl;
               server_name www.afpy.org;
               access_log /var/log/nginx/afpy.org-access.log;
               error_log /var/log/nginx/afpy.org-error.log;
@@ -190,7 +190,7 @@
         nginx_conf: |
           server
           {
-              listen 80;
+              listen [::]:80; listen 80;
               server_name planet.afpy.org;
               access_log /var/log/nginx/planet.afpy.org-access.log;
               error_log /var/log/nginx/planet.afpy.org-error.log;
@@ -199,7 +199,7 @@
 
           server
           {
-              listen 443 ssl;
+              listen [::]:443 ssl; listen 443 ssl;
               server_name planet.afpy.org;
               access_log /var/log/nginx/planet.afpy.org-access.log;
               error_log /var/log/nginx/planet.afpy.org-error.log;
@@ -233,7 +233,7 @@
         nginx_conf: |
           server
           {
-              listen 80;
+              listen [::]:80; listen 80;
               server_name lists.afpy.org;
               access_log /var/log/nginx/lists.afpy.org-access.log;
               error_log /var/log/nginx/lists.afpy.org-error.log;
@@ -242,7 +242,7 @@
 
           server
           {
-              listen 443 ssl;
+              listen [::]:443 ssl; listen 443 ssl;
               server_name lists.afpy.org;
               access_log /var/log/nginx/lists.afpy.org-access.log;
               error_log /var/log/nginx/lists.afpy.org-error.log;

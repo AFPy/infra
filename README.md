@@ -2,7 +2,6 @@
 
 On découpe nos *playbooks* Ansible par rôles :
 
-- `site.yml`: Inclu tous les autres, pratique pour tout exécuter.
 - `pycon.yml`: Pour les pycon.fr
 - `backup.yml`: Configure rsnapshot pour sauvegarder nos serveurs.
 - ...
@@ -12,11 +11,11 @@ En partant de là, on peut utiliser les commandes suivantes:
 Après avoir cloné ce repo, installé Ansible dans un venv, installez
 les roles nécessaires via :
 
-- ansible-galaxy install -r requirements.yml
+- ansible-galaxy install julienpalard.nginx tschifftner.exim4_sendonly
 
 Puis pour jouer les *playbooks* :
 
-- Pour tout relancer : `ansible-playbook site.yml`
+- Pour tout relancer : `ansible-parallel *.yml`
 - Pour configurer les PyCons : `ansible-playbook pycons.yml`
 
 
