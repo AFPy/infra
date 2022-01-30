@@ -1,0 +1,6 @@
+---
+- name: Install exim4 packages
+  apt:
+    name: '{{ exim4_sendonly_apt_packages }}'
+    state: present
+    cache_valid_time: 86400

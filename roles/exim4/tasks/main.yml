@@ -1,0 +1,17 @@
+---
+
+- name: Install exim4
+  include: install.yml
+  tags: ['exim4-sendonly-install']
+
+- name: Configure exim4
+  include: configure.yml
+  tags: ['exim4-sendonly-configure']
+
+- name: Start exim4
+  service:
+    name: exim4
+    state: started
+    enabled: true
+  changed_when: false
+  tags: ['always']
