@@ -1,4 +1,4 @@
 ---
 
 dependencies:
-  - role: tschifftner.exim4_sendonly
+  - role: exim4

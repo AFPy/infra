@@ -11,7 +11,7 @@ En partant de là, on peut utiliser les commandes suivantes:
 Après avoir cloné ce repo, installé Ansible dans un venv, installez
 les roles nécessaires via :
 
-- ansible-galaxy install julienpalard.nginx tschifftner.exim4_sendonly
+- ansible-galaxy install julienpalard.nginx
 
 Puis pour jouer les *playbooks* :
 

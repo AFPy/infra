@@ -1,5 +1,6 @@
 ---
-
+exim4_local_interfaces: '127.0.0.1;172.17.0.1'
+exim4_relay_nets: '172.16.0.0/12'
 gandi_api_key: "{{ vault_gandi_api_key }}"
 letsencrypt_email: julien@python.org
 admin_email: julien@python.org

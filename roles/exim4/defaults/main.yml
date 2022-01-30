@@ -16,3 +16,6 @@ exim4_sendonly_email_aliases: []
 exim4_sendonly_apt_packages:
   - exim4-daemon-light
   - mailutils
+
+exim4_local_interfaces: '127.0.0.1'
+exim4_relay_nets: ''
