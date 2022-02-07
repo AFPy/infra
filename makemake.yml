@@ -52,9 +52,14 @@
         content: |
           ---
 
-          - name: "AFPy jobs"
+          - name: "AFPy emplois"
             url: https://www.afpy.org/feed/emplois/rss.xml
             link: https://www.afpy.org/emplois
+            avatar: https://www.afpy.org/static/images/logo.svg
+
+          - name: "AFPy actualités"
+            url: https://www.afpy.org/feed/actualites/rss.xml
+            link: https://www.afpy.org/actualites
             avatar: https://www.afpy.org/static/images/logo.svg
 
           - name: "AFPy discuss"
