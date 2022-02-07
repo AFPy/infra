@@ -82,6 +82,11 @@
                   alias /home/afpy-org/src/afpy/static/;
               }
 
+              location /planet/
+              {
+                  return 301 https://planet.afpy.org/rss20.xml;
+              }
+
               location /admin/ {
                   auth_basic "Administration";
                   auth_basic_user_file afpy.org.htpasswd;
@@ -181,31 +186,6 @@
           WantedBy=multi-user.target
 
     - service: name=afpy-org state=started enabled=yes
-
-    - name: Redirect planet.afpy.org
-      include_role: name=nginx
-      vars:
-        nginx_domain: planet.afpy.org
-        nginx_certificates: [planet.afpy.org]
-        nginx_conf: |
-          server
-          {
-              listen [::]:80; listen 80;
-              server_name planet.afpy.org;
-              access_log /var/log/nginx/planet.afpy.org-access.log;
-              error_log /var/log/nginx/planet.afpy.org-error.log;
-              return 301 https://www.afpy.org/planet/;
-          }
-
-          server
-          {
-              listen [::]:443 ssl; listen 443 ssl;
-              server_name planet.afpy.org;
-              access_log /var/log/nginx/planet.afpy.org-access.log;
-              error_log /var/log/nginx/planet.afpy.org-error.log;
-              include snippets/letsencrypt-planet.afpy.org.conf;
-              return 301 https://www.afpy.org/planet/;
-          }
 
     - name: Redirect afpyro.afpy.org
       include_role: name=nginx

@@ -1,0 +1,93 @@
+---
+
+- hosts: makemake
+  tasks:
+    - name: A user for makemake
+      user:
+        name: makemake
+
+    - name: Clone makemake
+      become: true
+      become_user: makemake
+      git:
+        repo: https://framagit.org/makemake/makemake
+        dest: /home/makemake/src/
+
+    - name: install makemake requirements
+      become: true
+      become_user: makemake
+      pip:
+        requirements: /home/makemake/src/requirements.txt
+        virtualenv_command: /usr/bin/python3 -m venv
+        virtualenv: /home/makemake/venv/
+
+    - name: makemake nginx
+      include_role: name=nginx
+      vars:
+        nginx_owner: makemake
+        nginx_domain: planet.afpy.org
+        nginx_certificates: [planet.afpy.org]
+        nginx_conf: |
+          server
+          {
+              listen [::]:80; listen 80;
+              server_name planet.afpy.org;
+              access_log /var/log/nginx/planet.afpy.org-access.log;
+              error_log /var/log/nginx/planet.afpy.org-error.log;
+              return 301 https://$host$request_uri;
+          }
+
+          server
+          {
+              listen [::]:443 ssl; listen 443 ssl;
+              server_name planet.afpy.org;
+              access_log /var/log/nginx/planet.afpy.org-access.log;
+              error_log /var/log/nginx/planet.afpy.org-error.log;
+              include snippets/letsencrypt-planet.afpy.org.conf;
+              root /home/makemake/www/;
+          }
+
+    - name: Configure feeds
+      copy:
+        content: |
+          ---
+
+          - name: "AFPy jobs"
+            url: https://www.afpy.org/feed/emplois/rss.xml
+            link: https://www.afpy.org/emplois
+            avatar: https://www.afpy.org/static/images/logo.svg
+
+          - name: "AFPy discuss"
+            url: https://discuss.afpy.org/latest.rss
+            link: https://discuss.afpy.org
+            avatar: https://www.afpy.org/static/images/logo.svg
+
+          - name: "ascendances"
+            url: https://ascendances.wordpress.com/feed/
+            link: https://ascendances.wordpress.com/
+
+          - name: Yaal
+            url: https://www.yaal.fr/blog/feeds/all.atom.xml
+            link: https://www.yaal.fr/blog/index.html
+
+        dest: /home/makemake/src/datas/sources.yml
+
+    - name: makemake output directory
+      file:
+        state: directory
+        path: /home/makemake/www/
+        owner: makemake
+        group: makemake
+        mode: 0755
+
+    - name: makemake cron
+      ansible.builtin.cron:
+        name: makemake
+        minute: "0"
+        user: makemake
+        job: "cd /home/makemake/src/; /home/makemake/venv/bin/python /home/makemake/src/update.py --static /home/makemake/www/"
+
+    - name: run makemake once
+      become: true
+      become_user: makemake
+      shell: "cd /home/makemake/src/; /home/makemake/venv/bin/python /home/makemake/src/update.py --static /home/makemake/www/"
