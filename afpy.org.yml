@@ -207,6 +207,31 @@
               return 301 https://www.afpy.org/planet/;
           }
 
+    - name: Redirect afpyro.afpy.org
+      include_role: name=nginx
+      vars:
+        nginx_domain: afpyro.afpy.org
+        nginx_certificates: [afpyro.afpy.org]
+        nginx_conf: |
+          server
+          {
+              listen [::]:80; listen 80;
+              server_name afpyro.afpy.org;
+              access_log /var/log/nginx/afpyro.afpy.org-access.log;
+              error_log /var/log/nginx/afpyro.afpy.org-error.log;
+              return 301 https://discuss.afpy.org/upcoming-events;
+          }
+
+          server
+          {
+              listen [::]:443 ssl; listen 443 ssl;
+              server_name afpyro.afpy.org;
+              access_log /var/log/nginx/afpyro.afpy.org-access.log;
+              error_log /var/log/nginx/afpyro.afpy.org-error.log;
+              include snippets/letsencrypt-afpyro.afpy.org.conf;
+              return 301 https://discuss.afpy.org/upcoming-events;
+          }
+
     - name: Setup salt-fr.afpy.org
       include_role: name=nginx
       vars:

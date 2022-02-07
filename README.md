@@ -50,7 +50,6 @@ Elle héberge les services suivants :
 - https://www.afpy.org ([source](https://github.com/AFPy/site))
 - https://discuss.afpy.org une instance Discourse.
 - [https://*.pycon.fr/*](https://pycon.fr/) (que des sites statiuques)
-- https://afpyro.afpy.org ([source](https://github.com/AFPy/siteafpyro))
 - Alain le bot IRC du canal #afpy ([source](https://github.com/AFPy/alain))
 - La gate [IRC](https://afpy.org/irc)—[Discord](https://afpy.org/discord)
 - https://dl.afpy.org: un *directory listing* nginx des vidéos de nos conférences.
