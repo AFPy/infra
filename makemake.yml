@@ -52,28 +52,58 @@
         content: |
           ---
 
-          - name: "AFPy emplois"
-            url: https://www.afpy.org/feed/emplois/rss.xml
-            link: https://www.afpy.org/emplois
-            avatar: https://www.afpy.org/static/images/logo.svg
-
-          - name: "AFPy actualités"
-            url: https://www.afpy.org/feed/actualites/rss.xml
-            link: https://www.afpy.org/actualites
-            avatar: https://www.afpy.org/static/images/logo.svg
-
           - name: "AFPy discuss"
             url: https://discuss.afpy.org/latest.rss
             link: https://discuss.afpy.org
             avatar: https://www.afpy.org/static/images/logo.svg
 
+          - name: "AFPy - Mastodon"
+            url: "https://mamot.fr/@AFPy.rss"
+            link: "https://www.afpy.org/"
+
           - name: "ascendances"
             url: https://ascendances.wordpress.com/feed/
             link: https://ascendances.wordpress.com/
 
-          - name: Yaal
+          - name: "Bearstech"
+            url: "https://bearstech.com/atom_feed.xml"
+            link: "https://bearstech.com/societe/blog/"
+
+          - name: "Human coders"
+            url: "https://news.humancoders.com/t/python/items/feed"
+            link: "https://news.humancoders.com/t/python"
+
+          - name: "Le blog de Dim'"
+            url: "https://dmerej.info/blog/fr/index.xml"
+            link: "https://dmerej.info/blog/fr"
+
+          - name: "Linuxfr.org"
+            url: "https://linuxfr.org/tags/python/public.atom"
+            link: "https://linuxfr.org/tags/python/public"
+
+          - name: "Olivier Pons"
+            url: "https://www.olivierpons.fr/feed"
+            link: "https://www.olivierpons.fr/"
+
+          - name: "Stella blog"
+            url: "https://ww.stella.coop/blog.rss"
+            link: "https://www.stella.coop/blog-articles"
+
+          - name: "Yaal"
             url: https://www.yaal.fr/blog/feeds/all.atom.xml
             link: https://www.yaal.fr/blog/index.html
+
+          - name: "Zeste de savoir - Articles"
+            url: "https://zestedesavoir.com/articles/flux/rss/?tag=python"
+            link: "https://zestedesavoir.com/bibliotheque/?tag=python"
+
+          - name: "Zeste de savoir - Billets"
+            url: "https://zestedesavoir.com/billets/flux/rss/?tag=python"
+            link: "https://zestedesavoir.com/bibliotheque/?tag=python"
+
+          - name: "Zeste de savoir - Tutoriels"
+            url: "https://zestedesavoir.com/tutoriels/flux/rss/?tag=python"
+            link: "https://zestedesavoir.com/bibliotheque/?tag=python"
 
         dest: /home/makemake/src/datas/sources.yml
 
