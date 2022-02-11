@@ -84,7 +84,17 @@
 
               location /planet/
               {
-                  return 301 https://planet.afpy.org/rss20.xml;
+                  return 301 https://planet.afpy.org/atom.xml;
+              }
+
+              location /feed/actualites/rss.xml
+              {
+                  return 301 https://discuss.afpy.org/c/association.rss;
+              }
+
+              location /feed/emplois/rss.xml
+              {
+                  return 301 https://discuss.afpy.org/c/emplois.rss;
               }
 
               location /admin/ {
