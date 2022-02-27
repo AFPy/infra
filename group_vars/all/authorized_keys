@@ -2,6 +2,7 @@
 authorized_keys:
   asyd:
     - ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBJP+t8d7oLqPhXG40+jWogT+cK1ciiS+XB/nV8IoLw9gxrC05oWIoUo6vuqp0W+ugm7nf+zlIqEMjPHDzRp52iQ= asyd@asuka
+  entwanne: []
   hs-157:
     - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILQxDNqPx1uYblrbeliQZ5scDPFuMElTRBJmjUFwUMUB hs-157@jirafenn-2021-04-06
   marc:
