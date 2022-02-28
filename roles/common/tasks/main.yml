@@ -75,9 +75,9 @@
         - tcpdump
         - vim-nox
 
-  - name: Set some authorized keys
+  - name: Set authorized SSH keys for root user
     copy:
-      content: "{{ authorized_keys }}"
+      content: "{{ root_authorized_keys }}"
       dest: /root/.ssh/authorized_keys
       mode: 0600
       owner: root
