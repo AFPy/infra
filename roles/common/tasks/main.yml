@@ -62,7 +62,9 @@
         - fail2ban
         - git
         - htop
+        - man
         - ncdu
+        - needrestart
         - ntp
         - python3
         - python3-dev
