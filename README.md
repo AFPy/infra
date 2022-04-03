@@ -154,3 +154,49 @@ Puis j'ai sauvegardé/restauré la DB de greenlight :
 
 Il faut attendre un moment avec un `top` qui tourne, ruby a tout plein
 de truc a faire avant de démarrer.
+
+
+## Configuration TURN/STUN
+
+L'installation de BBB n'étant pas gérée par Ansible, pour le moment la
+conf TURN/STUN est faite à la main, c'est la seule chose à faire, elle
+ressemble à :
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+            ">
+
+    <bean id="stun0" class="org.bigbluebutton.web.services.turn.StunServer">
+        <constructor-arg index="0" value="stun:turn.afpy.org"/>
+    </bean>
+
+    <bean id="turn0" class="org.bigbluebutton.web.services.turn.TurnServer">
+        <constructor-arg index="0" value="[redacte]"/>
+        <constructor-arg index="1" value="turns:turn.afpy.org:443?transport=tcp"/>
+        <constructor-arg index="2" value="86400"/>
+    </bean>
+
+    <bean id="stunTurnService" class="org.bigbluebutton.web.services.turn.StunTurnService">
+        <property name="stunServers">
+            <set>
+                <ref bean="stun0" />
+            </set>
+        </property>
+        <property name="turnServers">
+            <set>
+              <ref bean="turn0" />
+            </set>
+        </property>
+        <property name="remoteIceCandidates">
+            <set>
+            </set>
+        </property>
+    </bean>
+</beans>
+```
+
+dans `/usr/share/bbb-web/WEB-INF/classes/spring/turn-stun-servers.xml`.
