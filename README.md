@@ -13,6 +13,11 @@ les roles nécessaires via :
 
 - ansible-galaxy install julienpalard.nginx
 
+Récupérez le secret dans [afpy/pass](https://github.com/AFPy/pass/):
+
+    git clone https://github.com/AFPy/pass/
+    PASSWORD_STORE_DIR=pass/infra pass Ansible-Vault > ~/.ansible-afpy-vault
+
 Puis pour jouer les *playbooks* :
 
 - Pour tout relancer : `ansible-parallel *.yml`
