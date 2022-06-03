@@ -161,7 +161,36 @@ Il faut attendre un moment avec un `top` qui tourne, ruby a tout plein
 de truc a faire avant de démarrer.
 
 
-## Configuration TURN/STUN
+### BBB password reset
+
+Pour accepter le password reset, BBB doit avoir :
+
+    ALLOW_MAIL_NOTIFICATIONS=true
+
+dans /root/greenlight/.env
+
+(Pour relire le `.env`: `cd /root/greenlight; docker-compose down && docker-compose up -d`)
+
+Pour vérifier la conf :
+
+    docker run --rm --env-file .env bigbluebutton/greenlight:v2 bundle exec rake conf:check
+
+Il y a des chances que ça ne passe pas, il faut laisser les mails
+sortir de leur conteneur Docker (par défaut il utilise sendmail DANS
+le conteneur).
+
+Il faut configurer le `.env` tel que:
+
+    SMTP_SERVER=172.17.0.1
+    SMTP_PORT=25
+    SMTP_DOMAIN=greenlight.afpy.org
+    SMTP_SENDER=bbb@afpy.org
+
+Puis vérifier qu'exim et le firewall (attention c'est peut-être `ufw`)
+les acceptent.
+
+
+### Configuration TURN/STUN
 
 L'installation de BBB n'étant pas gérée par Ansible, pour le moment la
 conf TURN/STUN est faite à la main, c'est la seule chose à faire, elle
