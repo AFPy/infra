@@ -45,6 +45,12 @@
     hour: "8"
     job: '/root/certbot-venv/bin/certbot -q renew'
 
+- name: Setup PATH in renewal cron
+  ansible.builtin.cron:
+    name: PATH
+    env: yes
+    job: /usr/sbin
+
 - name: Install nginx
   package:
     state: present
