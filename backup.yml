@@ -8,3 +8,33 @@
         name: rsync
         state: present
       tags: rsnapshot
+
+- hosts: rsnapshoter
+  roles:
+    - common
+    - rsnapshoter
+  vars:
+    rsnapshot_name: afpy
+    rsnapshotted_hosts: "{{ groups.rsnapshotted }}"
+    rsnapshot_backups:
+      - remote: bbb2.afpy.org:/srv/
+        path: bbb.afpy.org/
+      - remote: bbb2.afpy.org:/home/
+        path: bbb.afpy.org/
+      - remote: bbb2.afpy.org:/etc/
+        path: bbb.afpy.org/
+      - remote: bbb2.afpy.org:/root/greenlight/db/
+        path:  bbb.afpy.org/
+      - remote: bbb2.afpy.org:/var/bigbluebutton/
+        path: bbb.afpy.org/
+
+      - remote: deb2.afpy.org:/srv/
+        path: deb.afpy.org/
+      - remote: deb2.afpy.org:/home/
+        path: deb.afpy.org/
+      - remote: deb2.afpy.org:/etc/
+        path: deb.afpy.org/
+      - remote: deb2.afpy.org:/var/discourse/shared/standalone/backups/
+        path: deb.afpy.org/
+      - remote: deb2.afpy.org:/var/www/
+        path: deb.afpy.org/
