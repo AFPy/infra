@@ -97,20 +97,11 @@ sur toutes nos machines (emacs et vim installés, nos authorized-keys,
 pas de mlocate, hostname propre, firewall, ce genre de broutilles).
 
 
-# Backups
+# Sauvegardes
 
-Julien Palard a un rsnapshot (vérifié en 2021) sur son NAS perso, avec :
+Gandi nous fournit un serveur de sauvegardes, cf. l'inventaire et `backup.yml`.
 
-```
-backup  deb.afpy.org:/srv/      deb.afpy.org/
-backup  deb.afpy.org:/home/     deb.afpy.org/
-backup  deb.afpy.org:/etc/      deb.afpy.org/
-backup  deb.afpy.org:/srv/      deb.afpy.org/
-backup  deb.afpy.org:/home/     deb.afpy.org/
-backup  deb.afpy.org:/etc/      deb.afpy.org/
-backup  deb.afpy.org:/var/discourse/shared/standalone/backups/  deb.afpy.org/
-backup  storage.afpy.org:/var/www/ storage.afpy.org/
-```
+Julien Palard a aussi un rsnapshot (vérifié en 2022) sur son NAS perso, au cas où.
 
 
 ## BBB
