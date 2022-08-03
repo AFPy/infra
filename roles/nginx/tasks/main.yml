@@ -51,6 +51,20 @@
     env: yes
     job: /usr/sbin
 
+- name: Setup renewal hook directory
+  file:
+    path: /etc/letsencrypt/renewal-hooks/post
+    state: directory
+    mode: 0755
+
+- name: Setup renewal hook script
+  copy:
+    dest: /etc/letsencrypt/renewal-hooks/deploy/nginx.sh
+    mode: 0755
+    content: |
+      #!/bin/sh
+      /usr/bin/systemctl reload nginx
+
 - name: Install nginx
   package:
     state: present
