@@ -1,6 +1,15 @@
 ---
 
 - hosts: makemake
+  vars:
+    makemake_secret: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          37343337323036656636353033626634316239353366313330373938323031323430316463373566
+          6631376663363136306230336334653261386230333665630a623432643034366637626138303735
+          62313134653363386536633534656636643232613964666637323961353932306465623738323762
+          3930383063343266620a643736653063666532353334643937633566373735333166626537643638
+          39656363613936373436356431323234376432666365333236326634663337316566386338643831
+          3530303362316262303230653664636333636637383131653865
   tasks:
     - name: A user for makemake
       user:
@@ -12,6 +21,16 @@
       git:
         repo: https://framagit.org/makemake/makemake
         dest: /home/makemake/src/
+
+    - name: Clone makemake themes
+      become: true
+      become_user: makemake
+      git:
+        repo: https://framagit.org/makemake/makemake-themes
+        dest: /home/makemake/themes/
+
+    - name: Copy AFPy theme
+      command: cp -a /home/makemake/themes/afpy /home/makemake/src/themes/
 
     - name: install makemake requirements
       become: true
@@ -106,6 +125,78 @@
             link: "https://zestedesavoir.com/bibliotheque/?tag=python"
 
         dest: /home/makemake/src/datas/sources.yml
+
+    - name: Configure makemake
+      copy:
+        dest: /home/makemake/src/config-production.py
+        content: |
+          # encoding: utf-8
+
+          SECRET_KEY = "{{ makemake_secret }}"
+
+          JINJA_ENV = {
+              "TRIM_BLOCKS": True,
+              "LSTRIP_BLOCKS": True,
+          }
+
+          # Planet website configuration
+          # Title
+          MAKEMAKE_TITLE = "AFPy's Planet"
+          # Link to itself
+          MAKEMAKE_LINK = "https://planet.afpy.org/"
+          # Logo
+          MAKEMAKE_LOGO = "https://framagit.org/makemake/makemake/-/raw/main/makemake-logo.png"
+          # Favicon - if None, logo will be used in place
+          MAKEMAKE_FAVICON = None
+          # Description
+          MAKEMAKE_DESCRIPTION = "MakeMake The Dwarf Planet is a feed agregator."
+
+          # Themes
+          # Theme to use; should be present in themes/ folder
+          MAKEMAKE_THEME = "afpy"
+          # Not used for now, list all themes availables in themes/ folder
+          MAKEMAKE_DISCOVER_THEMES = False
+          # Not used for now, default list of themes
+          MAKEMAKE_THEMES = ["afpy"]
+
+
+          # Pagination
+          # Use pagination
+          MAKEMAKE_PAGINATION = False
+          # If pagination used, how many articles to display
+          MAKEMAKE_PAGINATION_SIZE = 10
+
+          # Boolean used in themes to display (or not) sources used
+          MAKEMAKE_DISPLAY_SOURCES = True
+          # Boolean used in themes to export subscriptions list (OPML format)
+          MAKEMAKE_EXPORT_SOURCES = True
+          # List of Planet feeds to generate (actualy, only RSS and ATOM are available)
+          MAKEMAKE_FEEDS = ["RSS", "ATOM"]
+          # Deleting old articles (in days)
+          MAKEMAKE_DELETE_OLDER = None
+
+          # Miscellaneous information that can be used by themes, you can specify whatever you
+          # want in there but it have to be used by the theme
+          MAKEMAKE_MISC = {
+              # Those values are specified only for testing purpose
+              "presentation": {
+                  "title": "AFPy's MakeMake",
+                  "text": """
+                  <p>MakeMake is a <a href="https://en.wikipedia.org/wiki/Planet_(software)" alt="planet_software from wikipedia">planet software</a> making it simple to agregate multiple feeds.</p>
+
+                  <p>You can contribute to MakeMake by opening issues on <a href="https://framagit.org/makemake/makemake/-/issues">our issue tracker</a> or contacting us via IRC.</p>""",
+              },
+              "related": [
+                  {
+                      "name": "MakeMake Source code",
+                      "link": "https://framagit.org/makemake/makemake",
+                  },
+                  {
+                      "name": "IRC Contact",
+                      "link": "https://kiwiirc.com/nextclient/irc.geeknode.org/makemake",
+                  },
+              ],
+          }
 
     - name: makemake output directory
       file:
