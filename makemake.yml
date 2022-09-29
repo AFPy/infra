@@ -115,10 +115,17 @@
         group: makemake
         mode: 0755
 
+    - name: makemake cron errors to email
+      ansible.builtin.cron:
+        name: MAILTO
+        env: yes
+        user: makemake
+        job: admin@afpy.org
+
     - name: makemake cron
       ansible.builtin.cron:
         name: makemake
-        minute: "0"
+        minute: "40"
         user: makemake
         job: "cd /home/makemake/src/; /home/makemake/venv/bin/python /home/makemake/src/update.py --static /home/makemake/www/"
 
