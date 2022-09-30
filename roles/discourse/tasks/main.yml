@@ -28,7 +28,11 @@
           error_log /var/log/nginx/{{ discourse_domain }}-error.log;
           include snippets/letsencrypt-{{ discourse_domain }}.conf;
           client_max_body_size 4m;
+
           location / {
+              error_page 502 =502 /errorpages/discourse_offline.html;
+              proxy_intercept_errors on;
+
               proxy_pass http://unix:/var/discourse/shared/standalone/nginx.http.sock:;
               proxy_set_header Host $http_host;
               proxy_http_version 1.1;
@@ -36,9 +40,28 @@
               proxy_set_header X-Forwarded-Proto https;
               proxy_set_header X-Real-IP $remote_addr;
           }
+
+          location /errorpages/ {
+              alias /var/www/discourse-errorpages/;
+          }
       }
 
 - name: Setup discourse
   template:
     src: app.yml
     dest: /var/discourse/containers/app.yml
+
+- name: Setup sorry page
+  template:
+    src: discourse_offline.html
+    dest: /var/www/discourse-errorpages/
+
+- name: Setup sorry logo
+  copy:
+    src: d-logo-sketch.png
+    dest: /var/www/discourse-errorpages/d-logo-sketch.png
+
+- name: Setup sorry sob
+  copy:
+    src: sob.png
+    dest: /var/www/discourse-errorpages/sob.png
