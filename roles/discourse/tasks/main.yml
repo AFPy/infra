@@ -27,6 +27,7 @@
           access_log /var/log/nginx/{{ discourse_domain }}-access.log;
           error_log /var/log/nginx/{{ discourse_domain }}-error.log;
           include snippets/letsencrypt-{{ discourse_domain }}.conf;
+          client_max_body_size 4m;
           location / {
               proxy_pass http://unix:/var/discourse/shared/standalone/nginx.http.sock:;
               proxy_set_header Host $http_host;
