@@ -6,9 +6,9 @@ On découpe nos *playbooks* Ansible par rôles :
 - `backup.yml`: Configure rsnapshot pour sauvegarder nos serveurs.
 - ...
 
-En partant de là, on peut utiliser les commandes suivantes:
+En partant de là, on peut utiliser les commandes suivantes :
 
-Après avoir cloné ce repo, installé Ansible dans un venv, installez
+Après avoir cloné ce repo, installé Ansible (dans un venv), installez
 les roles nécessaires via :
 
 - ansible-galaxy install julienpalard.nginx
@@ -26,19 +26,22 @@ Puis pour jouer les *playbooks* :
 
 ## Faire, ne pas faire
 
-Faire : Configurer les machines : apt install, fichiers de
-configuration, utilisateurs, éventuellement un premier `git clone`
-pour que ça marche si c'est un site statique.
+Faire : Configurer les machines :
+- `apt install`,
+- fichiers de configuration,
+- créer les utilisateurs,
+- éventuellement un premier `git clone` pour que ça marche si c'est un site statique.
 
-Ne pas faire : Deployer. En dehors de l'éventuel premier git clone,
-c'est le rôle de la CI (Github Actions, ...), pas de nos playbooks.
+Ne pas faire :
+- Deployer. En dehors de l'éventuel premier git clone,
+  c'est le rôle de la CI (Github Actions, ...), pas de nos playbooks.
 
 
 # Servers
 
 La distinction services/serveurs :
 
-- Un serveur contient un chiffre dans son hostname : deb2.afpy.org,
+- Un serveur contient un nombre dans son nom : deb2.afpy.org,
   bbb2.afpy.org, …
 - Un service ne contient pas de chiffre dans son hostname :
   discuss.afpy.org, bbb.afpy.org, www.afpy.org, …
@@ -69,6 +72,29 @@ Elle héberge les services suivants :
 C'est un VPS `V-R8 4 CPUs · 8 GB RAM`.
 
 
+## backup1.afpy.org
+
+♥ Machine sponsorisée par Gandi ♥
+
+C'est un « Gandi Cloud V5 » à Bissen au Luxembourg avec 512MB de RAM
+et 512GB de disque, il sauvegarde (via rsnapshot) les autres machines
+(voir `backup.yml`).
+
+Dernière vérification de `backup1.afpy.org` en octobre 2022 :
+
+- 51% du disque utilisé
+- Stocke 7.1GB de BBB
+- Stocke 231GB de deb2
+- `/srv/backups/rsnapshot_afpy/daily.0/deb.afpy.org/var/discourse/shared/standalone/backups/default/` contient bien les sauvegardes d'octobre 2022.
+
+Julien Palard a aussi un rsnapshot sur `silence.palard.fr`, vérifié en octobre 2022 :
+
+- 55% du disque utilisé
+- Stocke 7.1GB de BBB
+- Stocke 231GB de deb2
+- `/srv/backups/rsnapshot/daily.0/deb.afpy.org/var/discourse/shared/standalone/backups/default/` contient bien les sauvegardes d'octobre 2022.
+
+
 # Ansible
 
 On utilies ces rôles Ansible :
@@ -95,13 +121,6 @@ Voir la [doc](https://github.com/JulienPalard/ansible-role-nginx).
 *common* est un rôle "de base" permettant d'avoir une conf "normale"
 sur toutes nos machines (emacs et vim installés, nos authorized-keys,
 pas de mlocate, hostname propre, firewall, ce genre de broutilles).
-
-
-# Sauvegardes
-
-Gandi nous fournit un serveur de sauvegardes, cf. l'inventaire et `backup.yml`.
-
-Julien Palard a aussi un rsnapshot (vérifié en 2022) sur son NAS perso, au cas où.
 
 
 ## BBB
