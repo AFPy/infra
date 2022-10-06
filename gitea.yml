@@ -1,0 +1,6 @@
+---
+
+- hosts: gitea
+  tasks:
+    - name: Basic setup
+      include_role: name=common
