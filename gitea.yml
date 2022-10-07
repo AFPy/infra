@@ -14,6 +14,7 @@
           39346334353266613234363664643030303565313065313334333833383337623637366132663435
           61386535353635386339383731323464323135366362613734393833386632393166393261373433
           61363664376330343465656431316163396533326634643636326537383032323636
+
   tasks:
     - name: Basic setup
       include_role: name=common
@@ -110,9 +111,48 @@
         group: git
         path: /etc/gitea
 
+    - name: Setup nginx
+      include_role: name=nginx
+      vars:
+        nginx_domain: git.afpy.org
+        nginx_certificates: ['git.afpy.org']
+        nginx_conf: |
+          server
+          {
+              listen [::]:80; listen 80;
+              server_name git.afpy.org;
+              access_log /var/log/nginx/git.afpy.org-access.log;
+              error_log /var/log/nginx/git.afpy.org-error.log;
+              return 301 https://git.afpy.org$request_uri;
+          }
+
+          server
+          {
+              listen [::]:443 ssl; listen 443 ssl;
+              server_name git.afpy.org;
+              access_log /var/log/nginx/git.afpy.org-access.log;
+              error_log /var/log/nginx/git.afpy.org-error.log;
+              include snippets/letsencrypt-git.afpy.org.conf;
+              client_max_body_size 16M;
+
+              # location /_/static/assets/ {
+              #     alias /var/lib/gitea-static/public/;
+              # }
+
+              location / {
+                  proxy_pass http://localhost:3000;
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Real-IP $remote_addr;
+                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto $scheme;
+              }
+
+          }
+
     - name: Setup app.ini
+      notify: restart gitea
       copy:
-        path: /etc/gitea/app.ini
+        dest: /etc/gitea/app.ini
         mode: 0640
         owner: root
         group: git
@@ -185,9 +225,10 @@
           ROOT_PATH = /var/lib/gitea/log
           ROUTER    = console
 
-          [i18n]
-          LANGS     = fr_FR.UTF-8
-          NAMES     = Français
+          # [i18n]
+          # see https://github.com/go-gitea/gitea/issues/21199
+          # LANGS     = fr_FR,en_US
+          # NAMES     = Français,English
 
           [packages]
           ENABLED = false
@@ -267,43 +308,9 @@
           [Install]
           WantedBy=multi-user.target
 
-    - name: Setup nginx
-      include_role: name=nginx
-      vars:
-        nginx_domain: git.afpy.org
-        nginx_certificates: ['git.afpy.org']
-        nginx_conf: |
-          server
-          {
-              listen [::]:80; listen 80;
-              server_name git.afpy.org;
-              access_log /var/log/nginx/git.afpy.org-access.log;
-              error_log /var/log/nginx/git.afpy.org-error.log;
-              return 301 https://git.afpy.org$request_uri;
-          }
-
-          server
-          {
-              listen [::]:443 ssl; listen 443 ssl;
-              server_name git.afpy.org;
-              access_log /var/log/nginx/git.afpy.org-access.log;
-              error_log /var/log/nginx/git.afpy.org-error.log;
-              include snippets/letsencrypt-git.afpy.org.conf;
-              client_max_body_size 16M;
-
-              # location /_/static/assets/ {
-              #     alias /var/lib/gitea-static/public/;
-              # }
-
-              location / {
-                  proxy_pass http://localhost:3000;
-                  proxy_set_header Host $host;
-                  proxy_set_header X-Real-IP $remote_addr;
-                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                  proxy_set_header X-Forwarded-Proto $scheme;
-              }
-
-          }
-
     - name: Start gitea
       service: name=gitea enabled=yes state=started daemon_reload=yes
+
+  handlers:
+    - name: restart gitea
+      service: name=gitea state=restarted
