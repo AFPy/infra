@@ -244,3 +244,20 @@ ressemble à :
 ```
 
 dans `/usr/share/bbb-web/WEB-INF/classes/spring/turn-stun-servers.xml`.
+
+
+# DKIM
+
+Le playbook exim configure une clé DKIM et signe les mails avec. Mais un humain doit la propager sur les DNS.
+
+Le nom d'hote est le nom du serveur, donc pour `deb2`,
+`d=deb2.afpy.org`, et le selecteur vaut le nom de domaine avec des
+`-`, soit `s=deb2-afpy-org`.
+
+TL;DR la configuration qu'il faut faire ressemble à :
+
+    deb2-afpy-org._domainkey.deb2.afpy.org. IN TXT "v=DKIM1; k=rsa; p=MIG...QAB"
+
+La clé publique se situe dans `/etc/exim4/dkim/*.pem` et est donc récupérable via :
+
+    ssh root@deb2.afpy.org cat /etc/exim4/dkim/deb2-afpy-org.pem | grep -v ^- | tr -d '\n'
