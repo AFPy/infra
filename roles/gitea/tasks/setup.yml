@@ -1,0 +1,169 @@
+---
+
+- name: Create git group
+  group:
+    name: git
+    state: present
+
+- name: Create git-static group
+  group:
+    name: git-static
+    state: present
+
+- name: Gitea user
+  user:
+    system: true
+    password: '!'
+    home: /home/git
+    shell: /bin/bash
+    comment: "Git Version Control"
+    group: git
+    name: git
+
+- name: Gitea static user  # To compile and own static content
+  user:
+    system: true
+    password: '!'
+    comment: "To compile and own static gitea content."
+    group: git-static
+    name: git-static
+
+- name: Download gitea
+  get_url:
+    dest: /usr/local/bin/gitea
+    checksum: "{{ gitea_binary_checksum }}"
+    url: "https://dl.gitea.io/gitea/{{ gitea_version }}/gitea-{{ gitea_version }}-linux-amd64"
+    mode: 0755
+    owner: root
+    group: root
+  register: download_gitea
+
+- name: Install dependencies
+  package:
+    name:
+      - git
+      - postgresql
+      - python3-psycopg2  # For Ansible
+      # - rsync  # for static file generation
+      # - nodejs # for static file generation
+      # - npm    # for static file generation
+      # - make   # for static file generation
+      - nginx
+    state: present
+
+- name: Ensure locale en_US.UTF-8 exists
+  locale_gen:
+    name: en_US.UTF-8
+    state: present
+
+- name: Create psql git user
+  become: true
+  become_user: postgres
+  postgresql_user:
+    user: git
+
+- name: Create psql gitea DB
+  become: true
+  become_user: postgres
+  postgresql_db:
+    name: gitea
+    owner: git
+    encoding: UTF-8
+    lc_collate: en_US.UTF-8
+    lc_ctype: en_US.UTF-8
+    template: template0
+
+- name: Create gitea hierarchy
+  file:
+    state: directory
+    mode: 0750
+    owner: git
+    group: git
+    path: "{{ item }}"
+  loop:
+    - /var/lib/gitea/data
+    - /var/lib/gitea/log
+    - /var/lib/gitea/custom/templates/custom/
+    - /var/lib/gitea/custom/public/img/
+
+- name: Create gitea config hierarchy
+  file:
+    state: directory
+    mode: 0750
+    owner: root
+    group: git
+    path: /etc/gitea
+
+- name: Setup nginx
+  include_role: name=nginx
+  vars:
+    nginx_domain: git.afpy.org
+    nginx_certificates: ['git.afpy.org']
+    nginx_conf: |
+      server
+      {
+          listen [::]:80; listen 80;
+          server_name git.afpy.org;
+          access_log /var/log/nginx/git.afpy.org-access.log;
+          error_log /var/log/nginx/git.afpy.org-error.log;
+          return 301 https://git.afpy.org$request_uri;
+      }
+
+      server
+      {
+          listen [::]:443 ssl; listen 443 ssl;
+          server_name git.afpy.org;
+          access_log /var/log/nginx/git.afpy.org-access.log;
+          error_log /var/log/nginx/git.afpy.org-error.log;
+          include snippets/letsencrypt-git.afpy.org.conf;
+          client_max_body_size 16M;
+
+          # location /_/static/assets/ {
+          #     alias /var/lib/gitea-static/public/;
+          # }
+
+          location / {
+              proxy_pass http://localhost:3000;
+              proxy_set_header Host $host;
+              proxy_set_header X-Real-IP $remote_addr;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto $scheme;
+          }
+
+      }
+
+
+# Public asset generation (to allow nginx to serve them) needs nodejs>14.
+
+# - name: Create gitea static hierarchy
+#   file:
+#     state: directory
+#     mode: 0755
+#     owner: git-static
+#     group: git-static
+#     path: "{{ item }}"
+#   loop:
+#     - /var/lib/gitea-static/source
+#     - /var/lib/gitea-static/public
+#
+# - name: Download gitea tarball  # For the static content
+#   unarchive:
+#     src: "https://github.com/go-gitea/gitea/archive/refs/tags/v{{ gitea_version }}.tar.gz"
+#     dest: /var/lib/gitea-static/source/
+#     remote_src: true
+#     owner: git-static
+#     group: git-static
+#   register: download_gitea_tarball
+#
+# - name: Compile static assets
+#   command: make frontend
+#   args:
+#     chdir: "/var/lib/gitea-static/source/gitea-{{ gitea_version }}"
+#   become: true
+#   become_user: git-static
+#   when: download_gitea_tarball is changed
+#
+# - name: Copy public assets
+#   synchronize:
+#     src: "/var/lib/gitea-static/source/gitea-{{ gitea_version }}/public/"
+#     dest: "/var/lib/gitea-static/public/"

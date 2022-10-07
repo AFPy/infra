@@ -3,6 +3,7 @@
 - hosts: gitea
   vars:
     gitea_version: "1.17.2"
+    gitea_binary_checksum: "sha256:d0e903671ae04007c5956beb65985825795c1d9b24c9f354b48008fd44db1b57"
     gitea_internal_token: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           65396439373538656633396363313333663233343661643739633135306131613434353335353634
@@ -15,9 +16,4 @@
           61386535353635386339383731323464323135366362613734393833386632393166393261373433
           61363664376330343465656431316163396533326634643636326537383032323636
 
-  tasks:
-    - name: Basic setup
-      include_role: name=common
-
-    - name: Setup gitea
-      include_role: name=gitea
+  roles: [common, gitea]

@@ -1,0 +1,54 @@
+---
+
+- name: Setup app.ini
+  notify: restart gitea
+  template:
+    src: app.ini.j2
+    dest: /etc/gitea/app.ini
+    mode: 0640
+    owner: root
+    group: git
+
+- name: Setup gitea systemd service
+  template:
+    src: gitea.service.j2
+    dest: /etc/systemd/system/gitea.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: extra links footer
+  copy:
+    src: extra_links_footer.tmpl
+    dest: /var/lib/gitea/custom/templates/custom/extra_links_footer.tmpl
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart gitea
+
+- name: personalized home page
+  copy:
+    src: home.tmpl
+    dest: /var/lib/gitea/custom/templates/home.tmpl
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart gitea
+
+- name: favicon
+  copy:
+    src: icon.svg
+    dest: /var/lib/gitea/custom/public/img/favicon.svg
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart gitea
+
+- name: logo
+  copy:
+    src: icon.svg
+    dest: /var/lib/gitea/custom/public/img/logo.svg
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart gitea
