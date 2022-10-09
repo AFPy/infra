@@ -147,6 +147,7 @@
           planet = https://planet.afpy.org/atom.xml
           planet.fmt = {entry.title} - {entry.link}
           planet.delay = 20
+      notify: restart alain
 
     - service: name=alain enabled=yes state=started daemon_reload=yes
 
