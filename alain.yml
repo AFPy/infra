@@ -95,7 +95,7 @@
         owner: alain
         group: alain
         mode: 0660
-        contents: |
+        content: |
           [bot]
           nick = alain_afpy
           username = alain
