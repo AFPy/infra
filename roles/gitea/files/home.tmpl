@@ -53,5 +53,15 @@
 			</p>
 		</div>
 	</div>
+    <div class=center>
+       <h2>Les fingerprints du serveur sont:</h2>
+       <pre style="text-align: left">
+       $ ssh root@gitea1.afpy.org find /etc/ssh -name "*.pub" -exec ssh-keygen -l -f {} \\\;
+       256 SHA256:Uf3VStQS22OTQ51Yig8mx6x/p2I6zuDjPQgvX1xwwBk root@gitea1 (ECDSA)
+       3072 SHA256:2/86l5Zac7GPW0tYIGUfYgsfQBksvhepqBMCbofF9Ho root@gitea1 (RSA)
+       256 SHA256:3f+8wtVZV5zND0PzfsCK4rK5k3x129v3JCyTQdg7njY root@gitea1 (ED25519)
+       1024 SHA256:XehsP4BFUivZmORTLJiHzgjjLH0R7NSh+/6xDiwXbuY root@gitea1 (DSA)
+       </pre>
+    </div>
 </div>
 {{template "base/footer" .}}
