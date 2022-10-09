@@ -1,0 +1,55 @@
+---
+
+# It's possible to see some info about the timer using:
+#
+# systemctl list-timers gitea-backup
+# systemctl status gitea-backup.service
+
+
+- name: Create backup script
+  copy:
+    dest: /usr/local/bin/gitea-backup.sh
+    owner: root
+    group: root
+    mode: 0750
+    content: |
+      #!/bin/sh
+      rm -fr /var/backups/gitea
+      mkdir /var/backups/gitea
+      systemctl stop gitea
+      chown git:git /var/backups/gitea/
+      GITEA_WORK_DIR=/var/lib/gitea sudo -u git --preserve-env=GITEA_WORK_DIR gitea dump -c /etc/gitea/app.ini --file /var/backups/gitea/gitea.zip
+      sudo -u git pg_dump gitea > /var/backups/gitea/gitea.sql
+      chown root:root /var/backups/gitea
+      chmod 700 /var/backups/gitea/
+      systemctl start gitea
+
+- name: Create backup service
+  copy:
+    dest: /etc/systemd/system/gitea-backup.service
+    owner: root
+    group: root
+    mode: 0644
+    content: |
+      [Unit]
+      Description=Backup gitea
+
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/local/bin/gitea-backup.sh
+
+- name: Create backup timer
+  copy:
+    dest: /etc/systemd/system/gitea-backup.timer
+    owner: root
+    group: root
+    mode: 0644
+    content: |
+      [Unit]
+      Description=Daily gitea backup
+
+      [Timer]
+      OnCalendar=*-*-* 03:00:00
+
+- name: Start backup timer
+  service: name=gitea-backup.timer state=started daemon_reload=yes

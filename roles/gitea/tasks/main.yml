@@ -6,5 +6,8 @@
 - include: config.yml
   tags: config
 
+- include: backup.yml
+  tags: backup
+
 - name: Start gitea
   service: name=gitea enabled=yes state=started daemon_reload=yes

@@ -38,3 +38,6 @@
         path: deb.afpy.org/
       - remote: deb2.afpy.org:/var/www/
         path: deb.afpy.org/
+
+      - remote: gitea1.afpy.org:/var/backups/
+        path: git.afpy.org/

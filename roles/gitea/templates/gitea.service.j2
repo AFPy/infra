@@ -4,6 +4,7 @@ After=syslog.target
 After=network.target
 Wants=postgresql.service
 After=postgresql.service
+Requires=gitea-backup.timer
 
 [Service]
 RestartSec=2s
