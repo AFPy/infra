@@ -1,6 +1,44 @@
 ---
 
 - hosts: alains
+  vars:
+    alain_twitter_key: !vault |
+      $ANSIBLE_VAULT;1.1;AES256
+      39633966646630383235343735343336376637363230336163313664356630383736613730613037
+      3232626236316132653832333033613934353130376636660a616461326532616364333764656333
+      36363632656333353539396239663232333938633161323938623061316131613434343632396139
+      3339376261303962610a363436366136626238623632363166623463363137666261376666613733
+      64613961363332336365623035336664643436303739666135303037613232353765
+
+    alain_twitter_secret: !vault |
+      $ANSIBLE_VAULT;1.1;AES256
+      66303530396633333961656662613038306361316635343239613739383933396261353531376161
+      3561316336633964313063303863386235653637623966630a636131653761646430303038386636
+      39623364373131636338386466643237383063623239316138316463396565393031386635353633
+      3738636130363236640a383866393066336265356230393762663830633139623532343839396632
+      35633466646235636335353163356462656161653734643734663537373763653531376133373035
+      38396362393961383930383932343334363961663263313932333539386332666361643537633738
+      646666613437653163613537643034346163
+
+    alain_twitter_token: !vault |
+      $ANSIBLE_VAULT;1.1;AES256
+      32366631626565633965643530306238333434366563343736613936303631643430653361373764
+      3736306665643331366439633638386236633165303631650a346339373564623562313938323966
+      30333431346437656134373135303339633635373465383561653830636634363538393931633966
+      6434333933396466620a313832323336643464373166353161376234646261653631353938613731
+      37323363353236626631363862383232316332316633363466383531346635663339363063653663
+      37656563383163353565396461343565333930343264366535623137373265663337356139343531
+      663737653935393866633063383239326661
+
+    alain_twitter_token_secret: !vault |
+      $ANSIBLE_VAULT;1.1;AES256
+      30383237616136316130626638303734386137306434373535356136636164643139343932323263
+      6333396635336533366434356131326230653532613535340a303962343263313937396434373839
+      64663833316134343434613430316465353335356462366137633163646632363161353535303238
+      3363363962393533620a303864633134643565346431363262663535336433613534333662663461
+      61303635656164376238303432353738393839383533316630383339613663303531363637336665
+      3661623038613335313234393364326564663333353936316462
+
   tasks:
     - name: La naissance d'Alain
       user:
@@ -50,6 +88,65 @@
 
           [Install]
           WantedBy=multi-user.target
+
+    - name: Les petits secrets d'Alain
+      copy:
+        dest: /home/alain/src/alain.ini
+        owner: alain
+        group: alain
+        mode: 0660
+        contents: |
+          [bot]
+          nick = alain_afpy
+          username = alain
+          realname = I'm the AFPy mascot
+          host = irc.libera.chat
+          port = 7000
+          ssl = true
+          includes =
+              irc3.plugins.core
+              irc3.plugins.ctcp
+              irc3.plugins.feeds
+              irc3.plugins.human
+              irc3.plugins.logger
+              irc3.plugins.uptime
+              alain.alain3
+          channel = afpy
+          autojoins =
+              afpy
+
+          [twitter]
+          key = {{ alain_twitter_key }}
+          secret = {{ alain_twitter_secret }}
+          token = {{ alain_twitter_token }}
+          token_secret = {{ alain_twitter_token_secret }}
+
+          [irc3.plugins.command]
+          cmd = !
+          guard = irc3.plugins.command.mask_based_policy
+
+          [irc3.plugins.logger]
+          filename = /var/www/logs.afpy.org/log-{date:%Y-%m-%d}.txt
+
+          [irc3.plugins.logger.formatters]
+          privmsg = {date:%H:%M} <{mask.nick}> {data}
+
+          [irc3.plugins.command.masks]
+          gawel!~gael@amandine.bearstech.com = all_permissions
+          jpcw!jpcw@*.camguilhem.net = all_permissions
+          mdk!~mdk@python/psf/mdk = all_permissions
+          feth!*@*.tutu.info = all_permissions
+          * = view
+
+          [irc3.plugins.feeds]
+          delay = 20
+          directory = ~/.irc3/feeds/
+          dispatcher = alain.alain3.feed_dispatcher
+          channels = afpy
+
+          planet = https://planet.afpy.org/atom.xml
+          planet.fmt = {entry.title} - {entry.link}
+          planet.delay = 20
 
     - service: name=alain enabled=yes state=started daemon_reload=yes
 
