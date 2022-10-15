@@ -31,12 +31,19 @@
 - name: Download gitea
   get_url:
     dest: /usr/local/bin/gitea
-    checksum: "{{ gitea_binary_checksum }}"
     url: "https://dl.gitea.io/gitea/{{ gitea_version }}/gitea-{{ gitea_version }}-linux-amd64"
     mode: 0755
     owner: root
     group: root
-  register: download_gitea
+
+- name: Download gitea upgrade script
+  get_url:
+    dest: /usr/local/bin/gitea-upgrade.sh
+    url: "https://raw.githubusercontent.com/go-gitea/gitea/main/contrib/upgrade.sh"
+    mode: 0755
+    force: true
+    owner: root
+    group: root
 
 - name: Install dependencies
   package:
@@ -49,6 +56,7 @@
       # - npm    # for static file generation
       # - make   # for static file generation
       - nginx
+      - jq  # For upgrade.sh
     state: present
 
 - name: Ensure locale en_US.UTF-8 exists

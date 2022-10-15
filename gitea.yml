@@ -2,8 +2,7 @@
 
 - hosts: gitea
   vars:
-    gitea_version: "1.17.2"
-    gitea_binary_checksum: "sha256:d0e903671ae04007c5956beb65985825795c1d9b24c9f354b48008fd44db1b57"
+    gitea_version: "1.17.3"  # To upgrade, read the README file first.
     gitea_internal_token: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           65396439373538656633396363313333663233343661643739633135306131613434353335353634

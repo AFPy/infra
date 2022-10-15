@@ -95,6 +95,53 @@ Julien Palard a aussi un rsnapshot sur `silence.palard.fr`, vérifié en octobre
 - `/srv/backups/rsnapshot/daily.0/deb.afpy.org/var/discourse/shared/standalone/backups/default/` contient bien les sauvegardes d'octobre 2022.
 
 
+## gitea1.afpy.org
+
+♥ Machine sponsorisée par Gandi ♥
+
+C’est un « Gandi VPS V-R1 » 1 CPU, 1 GB RAM, 25 GB disk.
+
+C’est la machine derrière `git.afpy.org`, déployée via `gitea.yml`.
+
+
+### Mise à jour
+
+Pour faire une mise à jour, se connecter en root à la machine puis exécuter :
+
+    systemctl start gitea-backup.service
+    backupopts="-c /etc/gitea/app.ini --file /var/backups/gitea/before-upgrade.zip" gitea-upgrade.sh
+
+(Oui, je sais, ça fait deux sauvegardes, une par nous (avec un
+`pg_dump`), une par le script de gitea dont le SQL n’est pas aussi
+propre que celui généré par `pg_dump`).
+
+Une fois la mise à jour terminée, il est de bon goût de mettre à jour
+`gitea_version` dans `gitea.yml`.
+
+
+### Restaurer une sauvegarde
+
+La machine est sauvegardée automatiquement sur `backup1.afpy.org` (voir `backup.yml`).
+
+Adapté de : https://docs.gitea.io/en-us/backup-and-restore/#restore-command-restore
+
+Les sauvegardes sont sur `backup1.afpy.org` dans `/srv/backups/`,
+copiez-les d’abord vers `gitea1.afpy.org`.
+
+Une fois la sauvegarde rappatriée (`gitea.zip` ET `gitea.sql`) :
+
+    systemctl stop gitea
+    unzip gitea.zip
+    mv app.ini /etc/gitea/app.ini
+    rsync -vah --delete data/ /var/lib/gitea/data/
+    rsync -vah --delete repos/ /var/lib/gitea/data/gitea-repositories/
+    rsync -vah --delete custom/ /var/lib/gitea/custom/
+    chown -R git:git /var/lib/gitea/
+    sudo --user git psql -d gitea < gitea.sql
+
+Puis passer le playbook `gitea.yml` pour remettre les bons droits partout (le playbook démarrera aussi `gitea`).
+
+
 # Ansible
 
 On utilies ces rôles Ansible :
