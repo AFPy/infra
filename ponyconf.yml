@@ -1,0 +1,271 @@
+---
+
+- hosts: ponyconfs
+  vars:
+    ponyconf_sites:
+      - 'cfp-2023.pycon.fr'
+    ponyconf_user: ponyconf
+    ponyconf_home: "/home/{{ ponyconf_user }}"
+    ponyconf_secret: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          32626263653065663534326530636136303864343934346538323232356133616263383432333566
+          3166653266366566626362623864343464323934623166640a663838303764316131373938663432
+          30623833376433383766636362306361363137383639643130306536623135353362326539343164
+          3633303531643964390a616464376137613634663334646230343365343938633462643737376637
+          30383361643563373130393737616430316363363836333632393565616332666336643766613937
+          30386264356266373033383436383462333038656133363530313161646632353366393631393036
+          363439633164376438376431373935643634
+  tasks:
+    - name: Install dependencies
+      apt:
+        state: present
+        name:
+          - gettext
+
+    - name: Ponyconf user
+      user:
+        name: "{{ ponyconf_user }}"
+        home: "{{ ponyconf_home }}"
+        system: true
+
+    - name: PonyConf nginx config
+      include_role: name=nginx
+      vars:
+        nginx_domain: cfp.pycon.fr
+        nginx_certificates: "{{ ponyconf_sites + ['cfp.pycon.fr'] }}"
+        nginx_conf: |
+          server
+          {
+              listen [::]:80; listen 80;
+              server_name cfp.pycon.fr;
+              access_log /var/log/nginx/cfp.pycon.fr-access.log;
+              error_log /var/log/nginx/cfp.pycon.fr-error.log;
+              return 301 https://cfp-2023.pycon.fr$request_uri;
+          }
+
+          server
+          {
+              listen [::]:443 ssl; listen 443 ssl;
+              server_name cfp.pycon.fr;
+              access_log /var/log/nginx/cfp.pycon.fr-access.log;
+              error_log /var/log/nginx/cfp.pycon.fr-error.log;
+              include snippets/letsencrypt-cfp.pycon.fr.conf;
+              return 301 https://cfp-2023.pycon.fr$request_uri;
+          }
+
+          {% for ponyconf_site in ponyconf_sites %}
+          server
+          {
+              listen [::]:80; listen 80;
+              server_name {{ ponyconf_site }};
+              access_log /var/log/nginx/{{ ponyconf_site }}-access.log;
+              error_log /var/log/nginx/{{ ponyconf_site }}-error.log;
+              return 301 https://{{ ponyconf_site }}$request_uri;
+          }
+
+          server
+          {
+              listen [::]:443 ssl; listen 443 ssl;
+              server_name {{ ponyconf_site }};
+              access_log /var/log/nginx/{{ ponyconf_site }}-access.log;
+              error_log /var/log/nginx/{{ ponyconf_site }}-error.log;
+              include snippets/letsencrypt-{{ ponyconf_site }}.conf;
+
+              location /static/ {
+                  alias {{ ponyconf_home }}/static/;
+              }
+
+              location / {
+                  proxy_pass http://unix:{{ ponyconf_home }}/ponyconf.sock;
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Forwarded-Protocol $scheme;
+              }
+          }
+          {% endfor %}
+
+    - name: Clone PonyConf
+      become: true
+      become_user: "{{ ponyconf_user }}"
+      git:
+        repo: https://git.afpy.org/AFPy/PonyConf
+        dest: "{{ ponyconf_home }}/src/"
+      notify: restart ponyconf
+
+    - name: Setup PonyConf venv
+      become: true
+      become_user: "{{ ponyconf_user }}"
+      pip:
+        requirements: "{{ ponyconf_home }}/src/requirements.txt"
+        virtualenv_command: /usr/bin/python3 -m venv
+        virtualenv: "{{ ponyconf_home }}/venv/"
+
+    - name: Install gunicorn
+      become: true
+      become_user: "{{ ponyconf_user }}"
+      pip:
+        name: gunicorn
+        virtualenv_command: /usr/bin/python3 -m venv
+        virtualenv: "{{ ponyconf_home }}/venv/"
+
+    - name: PonyConf config
+      copy:
+        dest: "{{ ponyconf_home }}/src/afpy_settings.py"
+        owner: "{{ ponyconf_user }}"
+        group: "{{ ponyconf_user }}"
+        mode: 0600
+        content: |
+          from ponyconf.settings import *
+
+          SECRET_KEY = "{{ ponyconf_secret }}"
+          ALLOWED_HOSTS = {{ ponyconf_sites | to_json }}
+
+          DEBUG = False
+          LOGGING = {
+              "version": 1,
+              "disable_existing_loggers": False,
+              "formatters": {
+                  "django.server": {
+                      "()": "django.utils.log.ServerFormatter",
+                      "format": "[{server_time}] {message}",
+                      "style": "{",
+                  }
+              },
+              "handlers": {
+                  "mail_admins": {
+                      "class": "django.utils.log.AdminEmailHandler",
+                      "level": "ERROR",
+                       # But the emails are plain text by default - HTML is nicer
+                      "include_html": True,
+                  },
+                  "console": {
+                      "level": "INFO",
+                      "class": "logging.StreamHandler",
+                      "formatter": "django.server",
+                  },
+                  "django.server": {
+                      "level": "INFO",
+                      "class": "logging.StreamHandler",
+                      "formatter": "django.server",
+                  },
+
+              },
+              "loggers": {
+                  "": {"handlers": ["console"], "level": "INFO"},
+                  "django": {
+                      "handlers": ["console", "mail_admins"],
+                      "level": "INFO",
+                      "propagate": True,
+                  },
+              },
+          }
+
+          STATIC_ROOT = '{{ ponyconf_home }}/static'
+          STATIC_URL = '/static/'
+
+          MEDIA_ROOT = '{{ ponyconf_home }}/media'
+          MEDIA_URL = '/media/'
+
+          DEFAULT_FROM_EMAIL = 'noreply@afpy.org'
+          SERVER_EMAIL = 'ponyconf@afpy.org'
+          EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+          EMAIL_HOST = '127.0.0.1'
+          EMAIL_SUBJECT_PREFIX = "[PonyConf] "
+          EMAIL_PORT = 25
+
+          ADMINS = (
+              ('PonyConf Admins', 'julien@afpy.org'),
+          )
+
+          TIME_ZONE = 'Europe/Paris'
+          LANGUAGE_CODE = 'fr-FR'
+
+          SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+          USE_X_FORWARDED_HOST = True
+
+          del SITE_ID
+
+          CACHES = {
+              'default': {
+                  'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+                  'LOCATION': 'cache',
+              }
+          }
+          SELECT2_CACHE_BACKEND = 'default'
+
+    - name: Migrate db
+      command: "{{ ponyconf_home }}/venv/bin/python manage.py migrate"
+      args:
+        chdir: "{{ ponyconf_home }}/src"
+      environment:
+        DJANGO_SETTINGS_MODULE: afpy_settings
+      register: migrate_result
+      changed_when: '"  Applying " in migrate_result.stdout'
+      run_once: true
+      become: true
+      become_user: "{{ ponyconf_user }}"
+
+    - name: Create sites
+      command: "{{ ponyconf_home }}/venv/bin/python manage.py addsite {{ item|quote }}"
+      loop: "{{ ponyconf_sites }}"
+      register: create_site
+      changed_when: '"Created" in create_site.stdout'
+      args:
+        chdir: "{{ ponyconf_home }}/src"
+      environment:
+        DJANGO_SETTINGS_MODULE: afpy_settings
+
+    - name: Collectstatic
+      command: "{{ ponyconf_home }}/venv/bin/python manage.py collectstatic --noinput"
+      args:
+        chdir: "{{ ponyconf_home }}/src"
+      environment:
+        DJANGO_SETTINGS_MODULE: afpy_settings
+      register: collectstatic_result
+      changed_when: '"Copying " in collectstatic_result.stdout'
+
+    - name: Compile gettext
+      command: "{{ ponyconf_home }}/venv/bin/python manage.py compilemessages"
+      args:
+        chdir: "{{ ponyconf_home }}/src"
+      notify: restart ponyconf
+
+    - name: Create Cache Table
+      command: "{{ ponyconf_home }}/venv/bin/python manage.py createcachetable"
+      args:
+        chdir: "{{ ponyconf_home }}/src"
+      environment:
+        DJANGO_SETTINGS_MODULE: afpy_settings
+
+    - name: "PonyConf service"
+      notify: restart ponyconf
+      copy:
+        dest: /etc/systemd/system/ponyconf.service
+        content: |
+          [Unit]
+          Description=PonyConf
+          After=network.target
+
+          [Service]
+          Type=simple
+          Environment="DJANGO_SETTINGS_MODULE=afpy_settings"
+          ExecStart={{ ponyconf_home }}/venv/bin/gunicorn --pid {{ ponyconf_home }}/ponyconf.pid \
+          --bind unix:{{ ponyconf_home }}/ponyconf.sock -w 2 ponyconf.wsgi
+          User={{ ponyconf_user }}
+          Group={{ ponyconf_user }}
+          WorkingDirectory={{ ponyconf_home }}/src/
+          Restart=on-failure
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Start PonyConf
+      service: name=ponyconf enabled=yes state=started daemon_reload=yes
+
+
+  handlers:
+    - name: restart ponyconf
+      systemd:
+        daemon_reload: true
+        state: restarted
+        name: ponyconf

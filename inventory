@@ -21,6 +21,9 @@ backup1.afpy.org
 [alains]
 deb2.afpy.org
 
+[ponyconfs]
+deb2.afpy.org
+
 [discord_irc_sync]
 deb2.afpy.org
 
