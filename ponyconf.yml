@@ -69,7 +69,7 @@
               server_name {{ ponyconf_site }};
               access_log /var/log/nginx/{{ ponyconf_site }}-access.log;
               error_log /var/log/nginx/{{ ponyconf_site }}-error.log;
-              include snippets/letsencrypt-{{ ponyconf_site }}.conf;
+              include snippets/letsencrypt-cfp.pycon.fr.conf;
 
               location /static/ {
                   alias {{ ponyconf_home }}/static/;
