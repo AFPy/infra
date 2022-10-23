@@ -5,6 +5,8 @@
     ponyconf_sites:
       - domain: 'cfp-2023.pycon.fr'
         authenticator: gandi
+      - domain: '2023.cfp.roscon.fr'
+        authenticator: nginx
     ponyconf_user: ponyconf
     ponyconf_home: "/home/{{ ponyconf_user }}"
     ponyconf_secret: !vault |
