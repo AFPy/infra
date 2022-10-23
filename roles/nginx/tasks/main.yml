@@ -32,11 +32,19 @@
       dns_gandi_sharing_id = 146a3b9a-1b93-11ec-804f-00163ea99cff
     mode: 0600
     dest: /root/gandi.ini
+  when: certbot_authenticator == 'nginx'
 
-- name: Generate TLS certificates
+- name: Generate TLS certificates via Gandi
   command: /root/certbot-venv/bin/certbot certonly --cert-name {{ nginx_domain | quote }} -n --agree-tos -d {{ nginx_certificates | join(",") | quote }} -m {{ admin_email | quote }} --authenticator dns-gandi --dns-gandi-credentials /root/gandi.ini
   register: certbot
   changed_when: '"no action taken." not in certbot.stdout'
+  when: certbot_authenticator == 'gandi'
+
+- name: Generate TLS certificates via nginx
+  command: /root/certbot-venv/bin/certbot certonly --nginx --cert-name {{ nginx_domain | quote }} -n --agree-tos -d {{ nginx_certificates | join(",") | quote }} -m {{ admin_email | quote }}
+  register: certbot
+  changed_when: '"no action taken." not in certbot.stdout'
+  when: certbot_authenticator == 'nginx'
 
 - name: Setup renewal cron
   cron:

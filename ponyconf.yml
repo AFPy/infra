@@ -3,7 +3,8 @@
 - hosts: ponyconfs
   vars:
     ponyconf_sites:
-      - 'cfp-2023.pycon.fr'
+      - domain: 'cfp-2023.pycon.fr'
+        authenticator: gandi
     ponyconf_user: ponyconf
     ponyconf_home: "/home/{{ ponyconf_user }}"
     ponyconf_secret: !vault |
@@ -28,11 +29,11 @@
         home: "{{ ponyconf_home }}"
         system: true
 
-    - name: PonyConf nginx config
+    - name: PonyConf nginx redirection
       include_role: name=nginx
       vars:
-        nginx_domain: cfp.pycon.fr
-        nginx_certificates: "{{ ponyconf_sites + ['cfp.pycon.fr'] }}"
+        nginx_domain: "cfp.pycon.fr"
+        nginx_certificates: ["cfp.pycon.fr"]
         nginx_conf: |
           server
           {
@@ -53,23 +54,30 @@
               return 301 https://cfp-2023.pycon.fr$request_uri;
           }
 
-          {% for ponyconf_site in ponyconf_sites %}
+    - name: PonyConf nginx config
+      include_role: name=nginx
+      loop: "{{ ponyconf_sites }}"
+      vars:
+        certbot_authenticator: "{{ item.authenticator }}"
+        nginx_domain: "{{ item.domain }}"
+        nginx_certificates: ["{{ item.domain }}"]
+        nginx_conf: |
           server
           {
               listen [::]:80; listen 80;
-              server_name {{ ponyconf_site }};
-              access_log /var/log/nginx/{{ ponyconf_site }}-access.log;
-              error_log /var/log/nginx/{{ ponyconf_site }}-error.log;
-              return 301 https://{{ ponyconf_site }}$request_uri;
+              server_name {{ item.domain }};
+              access_log /var/log/nginx/{{ item.domain }}-access.log;
+              error_log /var/log/nginx/{{ item.domain }}-error.log;
+              return 301 https://{{ item.domain }}$request_uri;
           }
 
           server
           {
               listen [::]:443 ssl; listen 443 ssl;
-              server_name {{ ponyconf_site }};
-              access_log /var/log/nginx/{{ ponyconf_site }}-access.log;
-              error_log /var/log/nginx/{{ ponyconf_site }}-error.log;
-              include snippets/letsencrypt-cfp.pycon.fr.conf;
+              server_name {{ item.domain }};
+              access_log /var/log/nginx/{{ item.domain }}-access.log;
+              error_log /var/log/nginx/{{ item.domain }}-error.log;
+              include snippets/letsencrypt-{{ item.domain }}.conf;
 
               location /static/ {
                   alias {{ ponyconf_home }}/static/;
@@ -81,7 +89,6 @@
                   proxy_set_header X-Forwarded-Protocol $scheme;
               }
           }
-          {% endfor %}
 
     - name: Clone PonyConf
       become: true
@@ -117,7 +124,7 @@
           from ponyconf.settings import *
 
           SECRET_KEY = "{{ ponyconf_secret }}"
-          ALLOWED_HOSTS = {{ ponyconf_sites | to_json }}
+          ALLOWED_HOSTS = {{ ponyconf_sites | map(attribute='domain') | to_json }}
 
           DEBUG = False
           LOGGING = {
@@ -206,7 +213,7 @@
       become_user: "{{ ponyconf_user }}"
 
     - name: Create sites
-      command: "{{ ponyconf_home }}/venv/bin/python manage.py addsite {{ item|quote }}"
+      command: "{{ ponyconf_home }}/venv/bin/python manage.py addsite {{ item.domain|quote }}"
       loop: "{{ ponyconf_sites }}"
       register: create_site
       changed_when: '"Created" in create_site.stdout'
