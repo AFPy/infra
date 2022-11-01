@@ -80,19 +80,25 @@ C'est un « Gandi Cloud V5 » à Bissen au Luxembourg avec 512MB de RAM
 et 512GB de disque, il sauvegarde (via rsnapshot) les autres machines
 (voir `backup.yml`).
 
-Dernière vérification de `backup1.afpy.org` en octobre 2022 :
+Dernière vérification de `backup1.afpy.org` le 1er novembre 2022 :
 
-- 51% du disque utilisé
-- Stocke 7.1GB de BBB
-- Stocke 231GB de deb2
-- `/srv/backups/rsnapshot_afpy/daily.0/deb.afpy.org/var/discourse/shared/standalone/backups/default/` contient bien les sauvegardes d'octobre 2022.
+- 51% du disque utilisé (stable)
+- Dans `/srv/backups/rsnapshot_afpy/daily.0/`:
+    - Stocke 7.1GB de bbb.afpy.org
+    - Stocke 123MB de git.afpy.org
+    - Stocke 231GB de deb2.afpy.org
+    - `deb.afpy.org/var/discourse/shared/standalone/backups/default/` contient bien des sauvegardes récentes.
+    - `deb.afpy.org/var/www/logs.afpy.org/` contient bien des fichiers récents.
+    - `git.afpy.org/var/backups/gitea/` n'était pas à jour (problème de droits, résolu).
 
-Julien Palard a aussi un rsnapshot sur `silence.palard.fr`, vérifié en octobre 2022 :
+Julien Palard a aussi un rsnapshot sur `silence.palard.fr`, vérifié le 1er novembre 2022 :
 
-- 55% du disque utilisé
-- Stocke 7.1GB de BBB
-- Stocke 231GB de deb2
-- `/srv/backups/rsnapshot/daily.0/deb.afpy.org/var/discourse/shared/standalone/backups/default/` contient bien les sauvegardes d'octobre 2022.
+- 56% du disque utilisé
+- Dans `/srv/backups/rsnapshot/daily.0/`:
+    - Stocke 7.1GB de bbb.afpy.org
+    - Stocke 231GB de deb2.afpy.org
+    - Stocke 124MB de git.afpy.org
+    - deb.afpy.org/var/discourse/shared/standalone/backups/default/` contient bien les sauvegardes récentes.
 
 
 ## gitea1.afpy.org
