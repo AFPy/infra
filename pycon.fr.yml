@@ -51,7 +51,7 @@
               root /var/www/pycon.fr/;
               charset utf-8;
               location = / {
-                  return 302 https://www.pycon.fr/2020$request_uri;
+                  return 302 https://www.pycon.fr/2023$request_uri;
               }
               rewrite ^/2018/$ /2018/fr/index/ last;
               rewrite ^/2018/(A-Za-z-)+/$ /2018/fr/$1/ last;
