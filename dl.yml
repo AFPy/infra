@@ -86,6 +86,7 @@
           {
               listen [::]:443 ssl; listen 443 ssl;
               server_name dl.afpy.org;
+              charset utf-8;
               access_log /var/log/nginx/dl.afpy.org-access.log;
               error_log /var/log/nginx/dl.afpy.org-error.log;
               include snippets/letsencrypt-dl.afpy.org.conf;
@@ -95,5 +96,6 @@
               location /
               {
                   fancyindex on;
+                  fancyindex_exact_size off;  # Output human-readable file sizes.
               }
           }

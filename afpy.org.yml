@@ -265,6 +265,32 @@
               return 301 https://discuss.afpy.org/;
           }
 
+    # To learn more about this service see https://dl.afpy.org/photos/README.txt
+    - name: Setup photos.afpy.org
+      include_role: name=nginx
+      vars:
+        nginx_domain: photos.afpy.org
+        nginx_certificates: [photos.afpy.org]
+        nginx_conf: |
+          server
+          {
+              listen [::]:80; listen 80;
+              server_name photos.afpy.org;
+              access_log /var/log/nginx/photos.afpy.org-access.log;
+              error_log /var/log/nginx/photos.afpy.org-error.log;
+              return 301 https://photos.afpy.org$request_uri;
+          }
+
+          server
+          {
+              listen [::]:443 ssl; listen 443 ssl;
+              server_name photos.afpy.org;
+              access_log /var/log/nginx/photos.afpy.org-access.log;
+              error_log /var/log/nginx/photos.afpy.org-error.log;
+              include snippets/letsencrypt-photos.afpy.org.conf;
+              root /var/www/photos.afpy.org/;
+          }
+
 
   handlers:
     - name: reload nginx
