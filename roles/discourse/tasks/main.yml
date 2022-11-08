@@ -31,6 +31,7 @@
 
           location / {
               error_page 502 =502 /errorpages/discourse_offline.html;
+              error_page 500 =500 /errorpages/discourse_offline.html;
               proxy_intercept_errors on;
 
               proxy_pass http://unix:/var/discourse/shared/standalone/nginx.http.sock:;
