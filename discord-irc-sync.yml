@@ -43,7 +43,7 @@
                   "server": 840037163965349918,
                   "channel": 840037163965349924,
                   "token": "{{ vault_discord_bot_token }}",
-                  "owner": "mdk",
+                  "owner": "asyd",
                   "cmd_prefix": "!",
                   "output_msg": "<:username:> :message:",
                   "output_cmd": "CMD by :username:",
